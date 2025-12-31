@@ -33,6 +33,31 @@ export class AuthController {
     res.redirect(`${this.configService.get<string>('FRONTEND_URL')}`);
   }
 
+  @Get('42')
+  @UseGuards(AuthGuard('42'))
+  async fortyTwoAuth(@Req() req) { }
+
+  @Get('42/callback')
+  @UseGuards(AuthGuard('42'))
+  async fortyTwoAuthRedirect(@Req() req, @Res({ passthrough: true }) res: Response) {
+    console.log("42 callback");
+    console.log(req.user);
+    const { accessToken } = await this.authService.fortyTwoLogin(req.user);
+    // Set the cookies
+    res.cookie('access_token', accessToken, {
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      httpOnly: true,
+      secure: false, // REQUIRED for HTTP
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    // Redirect to frontend with token
+    console.log("redirecting to frontend");
+    console.log(this.configService.get<string>('FRONTEND_URL'));
+    res.redirect(`${this.configService.get<string>('FRONTEND_URL')}`);
+  }
+
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   async getMe(@Req() req) {

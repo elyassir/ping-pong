@@ -41,8 +41,8 @@ export default function Home(
             }
           }
         >
-          <div id="left-chihaja">
-            <div id="left-chihaja-child">
+          <div id="animated-circle">
+            <div id="animated-circle-child">
             </div>
           </div>
           <div id="app">
