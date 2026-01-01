@@ -1,36 +1,41 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards, Redirect } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly configService: ConfigService) { }
+  // Define options as a plain object to avoid Express types
+  private readonly accessTokenOptions = {
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    httpOnly: true,
+    secure: false, // Set to true in production with HTTPS
+    sameSite: 'lax' as const, // Cast to specific literal if strict typing is needed
+    path: '/',
+  };
+
+  constructor(
+    private readonly authService: AuthService, 
+    private readonly configService: ConfigService
+  ) { }
+
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) { }
+  async googleAuth(@Req() req) { 
+    // Guard initiates the Google login flow
+  }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req, @Res({ passthrough: true }) res: Response) {
-    console.log("google callback");
-    console.log(req.user);
+  @Redirect() // 1. Use Redirect decorator
+  async googleAuthRedirect(@Req() req, @Res({ passthrough: true }) res) {
     const { accessToken } = await this.authService.googleLogin(req.user);
-    // Set the cookies
-    res.cookie('access_token', accessToken, {
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      httpOnly: true,
-      secure: false, // REQUIRED for HTTP
-      sameSite: 'lax',
-      path: '/',
+    
+    // 2. Set cookie (Requires underlying adapter, usually Express by default)
+    res.cookie('access_token', accessToken, this.accessTokenOptions);
 
-    });
-
-    // Redirect to frontend with token
-    console.log("redirecting to frontend");
-    console.log(this.configService.get<string>('FRONTEND_URL'));
-    res.redirect(`${this.configService.get<string>('FRONTEND_URL')}`);
+    // 3. Return the redirection URL instead of calling res.redirect()
+    return { url: this.configService.get<string>('FRONTEND_URL') };
   }
 
   @Get('42')
@@ -39,29 +44,28 @@ export class AuthController {
 
   @Get('42/callback')
   @UseGuards(AuthGuard('42'))
-  async fortyTwoAuthRedirect(@Req() req, @Res({ passthrough: true }) res: Response) {
-    console.log("42 callback");
-    console.log(req.user);
+  @Redirect()
+  async fortyTwoAuthRedirect(@Req() req, @Res({ passthrough: true }) res) {
     const { accessToken } = await this.authService.fortyTwoLogin(req.user);
-    // Set the cookies
-    res.cookie('access_token', accessToken, {
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      httpOnly: true,
-      secure: false, // REQUIRED for HTTP
-      sameSite: 'lax',
-      path: '/',
-    });
+    
+    res.cookie('access_token', accessToken, this.accessTokenOptions);
 
-    // Redirect to frontend with token
-    console.log("redirecting to frontend");
-    console.log(this.configService.get<string>('FRONTEND_URL'));
-    res.redirect(`${this.configService.get<string>('FRONTEND_URL')}`);
+    return { url: this.configService.get<string>('FRONTEND_URL') };
   }
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   async getMe(@Req() req) {
     return this.authService.getMe(req.user);
+  }
+
+  @Get('logout')
+  @Redirect()
+  async logout(@Req() req, @Res({ passthrough: true }) res) {
+    // Clear cookie using the adapter's method
+    res.clearCookie('access_token', this.accessTokenOptions);
+    
+    return { url: this.configService.get<string>('FRONTEND_URL') };
   }
 }
 /*

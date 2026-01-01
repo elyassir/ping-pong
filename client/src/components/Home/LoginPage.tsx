@@ -6,19 +6,7 @@ import Logo from "./Logo";
 import { UserContext } from "../Context/main";
 import NavigationBar from "../Navigation/NavigationBar";
 import "./Home.css";
-
-// Custom 42 Icon Component
-const FortyTwoIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <path d="M16 3H20V7H16V3Z" fill="currentColor" />
-    <path d="M16 17H20V21H16V17Z" fill="currentColor" />
-    <path d="M4 3H8V7H4V3Z" fill="currentColor" />
-    <path d="M4 17H8V21H4V17Z" fill="currentColor" />
-    <path d="M4 10H8V14H4V10Z" fill="currentColor" />
-    <path d="M16 10H20V14H16V10Z" fill="currentColor" />
-    <path d="M10 7H14V17H10V7Z" fill="currentColor" />
-  </svg>
-);
+import "./Login.css"
 
 // Hero Section Component
 const Hero = () => {
@@ -150,7 +138,7 @@ export default function LoginPage() {
   const AuthUser = useContext(UserContext);
 
   return (
-    <Box sx={{
+    <Box className="login-page-scope" sx={{
       minHeight: '100vh',
       position: 'relative',
       overflow: 'hidden',

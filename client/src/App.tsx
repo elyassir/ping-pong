@@ -22,7 +22,6 @@ import { FriendsState } from "./components/Context/user";
 import api from "./components/Tools/axios";
 import LoginPage from "./components/Home/LoginPage";
 
-
 function App2() {
   const [notifications, setNotifications] = React.useState<any[]>([]);
   const AuthUser = React.useContext(UserContext);
@@ -31,9 +30,6 @@ function App2() {
   const { friendsState, setFriendsState, getFriends, render2 } = useGetFreindsState();
   const { conversations, setConversations, getConversations, render3 } = useGetConversations();
   const [code, setCode] = React.useState("");
-
-
-
 
   const handleOffline = (arg: { username: string }) => {
     setFriendsState((prev: FriendsState) => {
@@ -245,9 +241,6 @@ function App() {
 
   return (
     <App2 />
-    // <UserContext.Provider value={{ user: auth.user, isLoggedIn: auth.status === 'authenticated' }}>
-    //   <App />
-    // </UserContext.Provider>
   );
 }
 

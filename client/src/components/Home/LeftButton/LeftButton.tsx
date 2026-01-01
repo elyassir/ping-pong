@@ -3,76 +3,71 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
 import BasicTabs from './FriendsList';
-import "./Buttons.css";
-import './LeftButton.css';
-import { BackHand } from '@mui/icons-material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { UserContext } from '../../Context/main';
-import { get } from 'lodash';
-export default function LeftButton({friendsState, setFriendsState, getFriends}:any) {
+
+export default function LeftButton({ friendsState, setFriendsState, getFriends }: any) {
   const [state, setState] = React.useState(false);
-  const user = React.useContext(UserContext);
 
-
-
-    function toggleDrawer(open: boolean) {
-      return function(event: React.KeyboardEvent | React.MouseEvent) {
-        if ((event as React.KeyboardEvent).key === 'Shift') {
-          return;
-        }
-        if (open === true) {
-          getFriends();
-        }
-        setState(open);
-      };
-    }
-
+  function toggleDrawer(open: boolean) {
+    return function (event: React.KeyboardEvent | React.MouseEvent) {
+      if ((event as React.KeyboardEvent).key === 'Shift') {
+        return;
+      }
+      if (open === true) {
+        getFriends();
+      }
+      setState(open);
+    };
+  }
 
   return (
-    <Box sx={
-      {
-        
-      }
-    }>
-        <button style={
-          {
-
-            borderRadius: "10px 0 10px 0 ",
-            transform: "translate(0, -50%)",
-            position: "absolute",
-            top: "50%",
-            left: "5%",
-            zIndex: "100"
-
+    <>
+      <Button
+        onClick={toggleDrawer(true)}
+        startIcon={<ArrowBackIcon />}
+        sx={{
+          color: "#fff",
+          backgroundColor: "rgba(255, 255, 255, 0.05)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "12px",
+          padding: "12px 24px",
+          textTransform: "none",
+          fontFamily: "Rubik",
+          fontSize: "1rem",
+          fontWeight: 500,
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          '&:hover': {
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            transform: "translateX(4px)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.2)"
           }
-        } onClick={toggleDrawer(true)} className="button">
-          <div className="overlay">
-            <ArrowBackIcon />
-          </div>
-          <span className='span-text-button' style={
-            {
-              color: "#121212",
-              width: "100%",
-              textAlign: "left",
-              paddingBlock: "12px",
-              paddingLeft: "24px",
-              zIndex: 2,
-              transition: "all 200ms ease",
-            }
-          }>Friends</span>
-        </button>
-        <Drawer
-          anchor={'left'}
-          open={state}
-          onClose={toggleDrawer(false)}
-          sx={{background: "none"}}
+        }}
+      >
+        Friends
+      </Button>
+
+      <Drawer
+        anchor={'left'}
+        open={state}
+        onClose={toggleDrawer(false)}
+        PaperProps={{
+          sx: {
+            backgroundColor: "rgba(21, 21, 21, 0.95)",
+            backdropFilter: "blur(20px)",
+            borderRight: "1px solid rgba(255, 255, 255, 0.1)",
+            color: "white"
+          }
+        }}
+      >
+        <Box
+          onKeyDown={toggleDrawer(false)}
+          sx={{ width: { xs: '100vw', sm: '400px' } }}
         >
-          <Box
-            onKeyDown={toggleDrawer(false)}
-          >
-            <BasicTabs setFriendsState={setFriendsState} friendsState={friendsState} getFriends={getFriends}/>
-          </Box>
-        </Drawer>
-    </Box>
+          <BasicTabs setFriendsState={setFriendsState} friendsState={friendsState} getFriends={getFriends} />
+        </Box>
+      </Drawer>
+    </>
   );
 }

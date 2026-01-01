@@ -36,28 +36,11 @@ export default function AccountMenu({ username, image, notifications, setNotific
 
   return (
     <React.Fragment>
-      {
-        displaySettings ? (
-          <SettingsComponent setDisplaySettings={setDisplaySettings} />
-        ) : (
-          <div></div>
-        )
-      }
-      {
-        /*
-  
-          Notification icon will be added here
-          It will be a button that will open a dialog box
-          just like the account settings button
-          Copy Paste
-  
-          And then do it with backend
-  
-          Make Search bar responsive
-          Make the search bar work with backend
-  
-        */
-      }
+      {displaySettings ? (
+        <SettingsComponent setDisplaySettings={setDisplaySettings} />
+      ) : (
+        <div></div>
+      )}
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
 
         <NotificationBar notifications={notifications} setNotifications={setNotifications} socket={socket} getFriends={getFriends} />
@@ -98,14 +81,16 @@ export default function AccountMenu({ username, image, notifications, setNotific
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={() => {
-          localStorage.removeItem("access_token");
-          window.location.href = "/"; // Redirect to login page using navigate
-        }}>
-          <ListItemIcon>
-            <Logout fontSize="small" htmlColor='white' />
-          </ListItemIcon>
-          Logout
+        <MenuItem >
+          <Link to={`${process.env.REACT_APP_API_URL}/auth/logout`} style={{
+            textDecoration: "none", color: "white", display: 'flex', justifyContent: "center"
+            , alignItems: "center"
+          }} >
+            <ListItemIcon>
+              <Logout fontSize="small" htmlColor='white' />
+            </ListItemIcon>
+            Logout
+          </Link>
         </MenuItem>
       </Menu>
     </React.Fragment>
