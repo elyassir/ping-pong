@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { MembersInterface } from "../ChannelMembers";
-import { ChannelInterface } from "../../../../Context/user";
+import type { MembersInterface } from "../ChannelMembers";
+import type { ChannelInterface } from "../../../../Context/user";
 
 
 

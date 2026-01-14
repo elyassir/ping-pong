@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User, user } from "./user";
+import { type User, user } from "./user";
 import { createContext } from "react";
 
 type UserContextProviderProps = {

@@ -2,7 +2,7 @@
 
 
 import { useContext, useEffect, useState } from "react";
-import { ChannelInterface, Friend } from "../components/Context/user";
+import type { ChannelInterface, Friend } from "../components/Context/user";
 import { UserContext } from "../components/Context/main";
 
 interface FriendsState {

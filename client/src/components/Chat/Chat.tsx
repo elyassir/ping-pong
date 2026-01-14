@@ -5,7 +5,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import "./Chat.css";
 import { Link, useParams } from "react-router-dom";
 import ChannelBar from "./Channels/ChannelBar";
-import { ChannelInterface, FriendsState } from "../Context/user";
+import { type ChannelInterface, type FriendsState } from "../Context/user";
 import { UserContext } from "../Context/main";
 import Lottie from 'react-lottie';
 import animationData from './Animation.json';
@@ -35,7 +35,8 @@ export default function Chat(
   const [selecteChannel, setSelectedChannel] = React.useState("");
   const [isTyping, setIsTyping] = React.useState(false);
   const AuthUser = useContext(UserContext);
-  var timer: NodeJS.Timeout
+let timer: ReturnType<typeof setTimeout>
+
 
   if (chatWith) {
     window.history.replaceState({}, "", "/chat");

@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import './PenddingMenu.css'
 import { Link } from 'react-router-dom';
-import { Friend } from '../../Context/user';
+import { type Friend } from '../../Context/user';
 import { UserContext } from '../../Context/main';
 
 export default function PenddingMenu({ friend, setFriendsState }: { friend: Friend, setFriendsState: any }) {

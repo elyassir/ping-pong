@@ -1,11 +1,8 @@
-import { Avatar, Box, Button, IconButton, Stack, Typography } from "@mui/material";
-import { ChannelInterface, FriendsState } from "../../../Context/user";
-import { MessageBarChannel1 } from "../MessageBar";
-import { ArrowBack, MoreHorizSharp, MoreVert } from "@mui/icons-material";
+import { Avatar, Box, IconButton, Stack, Typography } from "@mui/material";
+import type { ChannelInterface, FriendsState } from "../../../Context/user";
+import { ArrowBack } from "@mui/icons-material";
 import ChannelListMembers from "./ChannelMembers";
-import Settings from "@mui/icons-material/Settings";
 import ChannelSettings from "./ChannelSettings";
-import { channel } from "diagnostics_channel";
 import ChannelAddFriend from "./ChannelAddFriend";
 
 

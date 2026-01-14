@@ -1,8 +1,7 @@
-import { Avatar, Button, Divider, IconButton, Input, Menu, MenuItem, Stack, Typography } from "@mui/material";
+import { Avatar, Button, IconButton, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import PeopleIcon from '@mui/icons-material/People';
-import React, { useContext, useEffect } from "react";
-import { ChannelInterface, FriendsState } from "../../../Context/user";
-import { Label, MoreHoriz, MoreVert } from "@mui/icons-material";
+import React, { useContext } from "react";
+import type { ChannelInterface, FriendsState } from "../../../Context/user";
 import MoreOptionsMember from "./MoreOptionsMember";
 
 import './style.css'

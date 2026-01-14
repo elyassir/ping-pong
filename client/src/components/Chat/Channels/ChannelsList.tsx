@@ -1,9 +1,7 @@
 import { ArrowBack } from "@mui/icons-material";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import {MessageBarChannel1} from "./MessageBar";
-import React from "react";
-import { UserContext } from "../../Context/main";
-import { ChannelInterface } from "../../Context/user";
+import type { ChannelInterface } from "../../Context/user";
 
 export default function ChannelsList(
     { selected, setSelected, showChannels, setShowChannels, selectedChannel, setSelectedChannel, groups, setGroups, conversation  } : any

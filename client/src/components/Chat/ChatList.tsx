@@ -8,11 +8,10 @@ import {
   Typography,
 } from "@mui/material";
 import Normal from "./Normal";
-import MessagesBar from "./MessagesBar";
 import {UserContext} from '../Context/main'
 import ChatSettings from "./ChatSettings";
 import ChannelsList from "./Channels/ChannelsList";
-import { ChannelInterface, FriendsState } from "../Context/user";
+import { type ChannelInterface, type FriendsState } from "../Context/user";
 import { toast } from "react-toastify";
 
 interface ChatListProps {

@@ -10,7 +10,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import styled from '@emotion/styled';
 import './CreateGroup.css';
 import { UserContext } from '../../../Context/main';
-import { ChannelInterface } from '../../../Context/user';
+import type { ChannelInterface } from '../../../Context/user';
 import UpdateChannel from './UpdateChannel';
 import { toast } from 'react-toastify';
 import CustomInput from './CustomInput';

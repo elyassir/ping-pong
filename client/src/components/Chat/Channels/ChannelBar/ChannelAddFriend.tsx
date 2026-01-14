@@ -1,7 +1,6 @@
 import { Avatar, IconButton, Menu, MenuItem, Stack, Typography } from "@mui/material";
-import PeopleIcon from '@mui/icons-material/People';
-import React, { useContext, useEffect } from "react";
-import { ChannelInterface, Friend, FriendsState } from "../../../Context/user";
+import React, { useContext } from "react";
+import type { ChannelInterface, Friend, FriendsState } from "../../../Context/user";
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { UserContext } from "../../../Context/main";
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';

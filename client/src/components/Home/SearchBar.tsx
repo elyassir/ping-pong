@@ -18,7 +18,7 @@ export const SearchBar = () => {
         }
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/users/search/${searchTerm}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/search/${searchTerm}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

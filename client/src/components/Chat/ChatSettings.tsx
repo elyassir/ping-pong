@@ -1,10 +1,9 @@
 import { Settings } from '@mui/icons-material'
-import { IconButton, Menu, MenuItem } from '@mui/material'
+import { IconButton, Menu } from '@mui/material'
 import React from 'react'
 import CreateGroup from './Channels/CreateGroup'
 import SearchChannel from './Channels/FIndChannel'
-import { ChannelInterface } from '../Context/user'
-import { Box } from '@mui/system'
+import { type ChannelInterface } from '../Context/user'
 
 const ChatSettings = (
   {
@@ -15,7 +14,6 @@ const ChatSettings = (
     conversations: ChannelInterface[]
   }
 ) => {
-    const [animationStyle, setAnimationStyle] = React.useState({} as React.CSSProperties)
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

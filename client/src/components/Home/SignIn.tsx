@@ -1,7 +1,7 @@
 import Stack from '@mui/material/Stack';
 import LoginIcon from '@mui/icons-material/Login';
 
-const api = process.env.REACT_APP_API_URL + "/auth/google"
+const api = import.meta.env.VITE_API_URL + "/auth/google"
 
 export default function SignIn() {
   return (

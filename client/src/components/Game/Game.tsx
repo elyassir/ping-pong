@@ -5,12 +5,8 @@ import { useContext, useEffect, useState } from "react";
 import MyComponent from "./Result";
 import { UserContext } from "../Context/main";
 import { useNavigate } from "react-router-dom";
-import { user } from "../Context/user";
 import Loading from "./Loading";
 import Alert from '@mui/material/Alert';
-
-
-
 
 export default function Game({ socket }: { socket: any }) {
     let token  ='';
@@ -37,7 +33,7 @@ export default function Game({ socket }: { socket: any }) {
             sessionStorage.setItem('GameToken', Token);
             setShowTheGame(true);
         });
-        socket.on('NotAbleToPlay', (data : any) => {
+        socket.on('NotAbleToPlay', () => {
             <Alert variant="filled" severity="error">Someting went Wrong .</Alert>
             navigate('/');
             return ;

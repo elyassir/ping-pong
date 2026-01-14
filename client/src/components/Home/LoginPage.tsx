@@ -49,8 +49,8 @@ const Hero = () => {
 
 // Login Card Component
 const LoginCard = () => {
-  const googleUrl = `${process.env.REACT_APP_API_URL}/auth/google`;
-  const fortyTwoUrl = `${process.env.REACT_APP_API_URL}/auth/42`;
+  const googleUrl = `${import.meta.env.VITE_API_URL}/auth/google`;
+  const fortyTwoUrl = `${import.meta.env.VITE_API_URL}/auth/42`;
 
   const buttonStyles = {
     fontSize: '1rem',
@@ -125,6 +125,7 @@ const LoginCard = () => {
               boxShadow: '0 4px 12px rgba(255,255,255,0.2)',
             },
           }}
+          className="text-red"
         >
           Continue with Intra 42
         </Button>

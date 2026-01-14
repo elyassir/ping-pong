@@ -6,14 +6,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, type JSX } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import { UserContext } from "../Context/main";
 import Message from "./Message";
-import { FriendsState, Message as MessageInterface } from "../Context/user";
+import { type FriendsState, type Message as MessageInterface } from "../Context/user";
 
 
-import data from '@emoji-mart/data'
 import { init } from 'emoji-mart'
 
 import Picker from '@emoji-mart/react'

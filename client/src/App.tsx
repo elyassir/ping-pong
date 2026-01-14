@@ -14,11 +14,10 @@ import PlayWithAi from "./components/Game/PLayWithAi";
 import Game from "./components/Game/Game";
 import GameWithInvi from "./components/Game/playWithFriendInvit";
 import useGetConversations from "./Hooks/useGetConversations";
-import { Box, Typography } from "@mui/material";
 import { NotFoundPage, TwoFactorAuth, fetchForNotifications } from "./components/Tools/ContainerFloat";
 import use2fa from "./Hooks/use2fa";
 import "./App.css";
-import { FriendsState } from "./components/Context/user";
+import { type FriendsState } from "./components/Context/user";
 import api from "./components/Tools/axios";
 import LoginPage from "./components/Home/LoginPage";
 

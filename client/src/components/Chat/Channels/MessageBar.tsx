@@ -1,9 +1,6 @@
-import { Avatar, Divider, IconButton, Stack } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../Context/main";
-import { ChannelInterface } from "../../Context/user";
-import { More, MoreHoriz, MoreVert } from "@mui/icons-material";
+import { Avatar, Divider, Stack } from "@mui/material";
+import { useState } from "react";
+import type { ChannelInterface } from "../../Context/user";
 
 interface MessageBarChannelProps {
   group: ChannelInterface;

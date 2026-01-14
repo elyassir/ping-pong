@@ -1,9 +1,7 @@
-import React, { useContext } from 'react'
 import { Avatar } from '@mui/material'
 import './UpdateChannel.css'
 import { useState } from 'react'
-import { UserContext } from '../../../Context/main'
-import { ChannelInterface } from '../../../Context/user'
+import type { ChannelInterface } from '../../../Context/user'
 
 interface UpdateChannelProps {
     inputRef:any,
@@ -16,7 +14,6 @@ export default function UpdateChannel(
         channel 
     }: UpdateChannelProps
 ) {
-    const AuthUser = useContext(UserContext);
     const [src, setSrc] = useState<string>(channel.image);
 
     return (

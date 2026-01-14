@@ -5,12 +5,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Box, Input, MenuItem, Stack, Typography } from '@mui/material';
+import { Box, Input, Stack, Typography } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import styled from '@emotion/styled';
 import './CreateGroup.css';
 import { UserContext } from '../../Context/main';
-import { ChannelInterface } from '../../Context/user';
+import type { ChannelInterface } from '../../Context/user';
 import { toast } from 'react-toastify';
 import CustomInput from './ChannelBar/CustomInput';
 import { CheckCircle } from '@mui/icons-material';
@@ -92,7 +92,6 @@ const CreateGroup = ({ onClickFun, groups, setGroups }: {
         body: formData
       });
       //console.log(response);
-      const data = await response.json();
       if (!response.ok) {
         throw new Error('Error creating group');
       }

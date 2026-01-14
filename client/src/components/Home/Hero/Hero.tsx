@@ -5,7 +5,7 @@ import InviteFriendToGame from './InviteFriendToGame';
 import Lottie from 'react-lottie';
 import animationData from '../Animation.json';
 import { Typewriter } from 'react-simple-typewriter';
-import { FriendsState } from '../../Context/user';
+import  type { FriendsState } from '../../Context/user';
 
 interface HeroProps {
   socket: any;

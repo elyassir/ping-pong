@@ -1,11 +1,9 @@
-import { Avatar, Badge, Box, Button, Divider, IconButton, List, ListItem, Typography } from "@mui/material";
-import { useContext } from "react";
-import { UserContext } from "../../Context/main";
+import { Avatar, Badge, Box, Divider, IconButton, List, ListItem, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTableTennisPaddleBall } from '@fortawesome/free-solid-svg-icons'
 import { StyledBadge } from "../LastMatchesList";
-import { Friend, FriendsState } from "../../Context/user";
+import type { Friend, FriendsState } from "../../Context/user";
 import { InviteFriendToGameButton } from "./InviteToGameButton";
 import styled from "@emotion/styled";
 
@@ -16,7 +14,6 @@ const StyledBadge2 = styled(Badge)(() => ({
 }));
 
 export default function InviteFriendToGame({ setShowInviteFriendToGame, socket, friendsState }: { setShowInviteFriendToGame: any, socket: any, friendsState: FriendsState }) {
-    const AuthUser = useContext(UserContext);
 
     document.addEventListener('keydown', (e) => {
         if (e.key === "Escape") {

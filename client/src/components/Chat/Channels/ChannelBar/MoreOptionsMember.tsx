@@ -1,7 +1,7 @@
 import { IconButton, Menu, MenuItem } from "@mui/material"
-import { ChannelInterface, Friend, FriendsState } from "../../../Context/user"
+import type { ChannelInterface, FriendsState } from "../../../Context/user"
 import { MoreVert } from "@mui/icons-material"
-import { MembersInterface } from "./ChannelMembers"
+import type { MembersInterface } from "./ChannelMembers"
 import React, { useEffect } from "react"
 import { toast } from "react-toastify"
 

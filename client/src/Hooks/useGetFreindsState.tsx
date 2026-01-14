@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Friend, FriendsState } from "../components/Context/user";
+import type { FriendsState } from "../components/Context/user";
 import { UserContext } from "../components/Context/main";
 
 const useGetFreindsState = () => {

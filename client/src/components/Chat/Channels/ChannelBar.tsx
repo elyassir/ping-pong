@@ -8,10 +8,8 @@ import {
 } from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import SendIcon from "@mui/icons-material/Send";
-import { io } from "socket.io-client";
 import { UserContext } from "../../Context/main";
-import ReactDOM from "react-dom";
-import { ChannelInterface, ChannelMessagesInterface, FriendsState, Message as MessageInterface } from "../../Context/user";
+import type { ChannelInterface, ChannelMessagesInterface, FriendsState } from "../../Context/user";
 import MessageChannel from "./MessageChannel";
 import HeaderChannelBar from "./ChannelBar/HeaderChannelBar";
 import { toast } from "react-toastify";
@@ -65,7 +63,7 @@ export default function ChannelBar({ setFriendsState, socket, selecteChannel, se
             return;
         }
         // socket.emit("joinRoom", chat.id.toString());
-        socket.on("joinRoom", (arg: any) => {
+        socket.on("joinRoom", () => {
             //console.log(`Joined room successfully}`)
         })
         socket.on("GroupMessages", (arg: any) => {

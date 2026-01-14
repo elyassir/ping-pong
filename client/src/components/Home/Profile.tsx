@@ -82,7 +82,7 @@ export default function AccountMenu({ username, image, notifications, setNotific
           Settings
         </MenuItem>
         <MenuItem >
-          <Link to={`${process.env.REACT_APP_API_URL}/auth/logout`} style={{
+          <Link to={`${import.meta.env.VITE_API_URL}/auth/logout`} style={{
             textDecoration: "none", color: "white", display: 'flex', justifyContent: "center"
             , alignItems: "center"
           }} >

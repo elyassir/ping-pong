@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import { UserContext } from "../Context/main";
-import { Message as MessageInt } from "../Context/user";
+import { type Message as MessageInt } from "../Context/user";
 
 const stylesM1 = {
   width: "fit-content",
@@ -22,7 +22,7 @@ const stylesM1 = {
   wordBreak: "break-all",
 }
 
-function Message1({ children, message, lastDiv }: { children: string, message: MessageInt, lastDiv: React.RefObject<HTMLDivElement>}) {
+function Message1({ children, message, lastDiv }: { children: string, message: MessageInt, lastDiv: React.RefObject<HTMLDivElement> | null }) {
   return (
     <Box
       ref={lastDiv}
@@ -83,7 +83,7 @@ const stylesM2 = {
 }
 
 
-function Message2({ children, message, lastDiv }: { children: string, message: MessageInt, lastDiv: React.RefObject<HTMLDivElement>}) {
+function Message2({ children, message, lastDiv }: { children: string, message: MessageInt, lastDiv: React.RefObject<HTMLDivElement> | null}) {
   return (
     <Box
       ref={lastDiv}
@@ -136,14 +136,11 @@ export default function Message({
   sender: string;
   message: MessageInt;
   previousMessage: MessageInt;
-  lastDiv: React.RefObject<HTMLDivElement>;
+  lastDiv: React.RefObject<HTMLDivElement> | null;
 }) {
   const AuthUser = useContext(UserContext);
   const [showDate, setShowDate] = React.useState(false);
 
-  // else {
-  //   setShowDate(new Date(message.created_on).getDate() !== new Date(dateLastMessage).getDate());
-  // }
   useEffect(() => {
     if (previousMessage === undefined ) {
       setShowDate(true);

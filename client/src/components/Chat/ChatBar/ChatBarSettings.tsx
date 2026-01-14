@@ -1,6 +1,6 @@
 import { Settings } from "@mui/icons-material";
 import { Box, IconButton, Menu, MenuItem } from "@mui/material";
-import { Friend } from "../../Context/user";
+import type { Friend } from "../../Context/user";
 import React from "react";
 import { toast } from "react-toastify";
 import AlertDialog from "../../Home/LeftButton/Dialog";

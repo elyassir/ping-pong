@@ -1,13 +1,9 @@
-import { MoreVert, Update } from "@mui/icons-material";
-import { Settings } from '@mui/icons-material';
-import { Divider, IconButton, Menu, MenuItem } from '@mui/material'
+import { MoreVert } from "@mui/icons-material";
+import { IconButton, Menu } from '@mui/material'
 import React from 'react'
-import { Box } from '@mui/system'
 import AlertDialog from "../../../Home/LeftButton/Dialog";
-import { channel } from "diagnostics_channel";
-import { ChannelInterface } from "../../../Context/user";
+import type { ChannelInterface } from "../../../Context/user";
 import { toast } from "react-toastify";
-import UpdateChannel from "./UpdateChannel";
 import UpdateChannelInfo from "./UpdateChannelInfo";
 
 const ChannelSettings = (
@@ -27,10 +23,8 @@ const ChannelSettings = (
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       setAnchorEl(event.currentTarget);
     };
-    const [openUpdateInfoDialog, setOpenUpdateInfoDialog] = React.useState(false);
     const handleClose = () => {
       setAnchorEl(null);
-      setOpenUpdateInfoDialog(true);
     };
     const handleLeaveChannel = () => {
       try {
