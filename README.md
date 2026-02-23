@@ -285,7 +285,7 @@ This project is part of the 42 School curriculum.
 
 This project was developed as a group effort as part of the 42 School curriculum.
 
-* **Mootee** (Project Lead)
+* **Mootee** (Me)
   GitHub: [https://github.com/elyassir](https://github.com/elyassir)
 
 * **Elhazin**
