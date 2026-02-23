@@ -281,5 +281,19 @@ VITE_WS_URL=http://localhost
 This project is part of the 42 School curriculum.
 
 ---
+## 👥 Contributors
+
+This project was developed as a group effort as part of the 42 School curriculum.
+
+* **Mootee** (Project Lead)
+  GitHub: [https://github.com/elyassir](https://github.com/elyassir)
+
+* **Elhazin**
+  GitHub: [https://github.com/AnasBouzanbil](https://github.com/AnasBouzanbil)
+
+* **0rph1no**
+  GitHub: [https://github.com/0rph1no](https://github.com/0rph1no)
+
+---
 
 <p align="center">Made with ❤️ at 42</p>
