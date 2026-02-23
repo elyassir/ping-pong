@@ -4,6 +4,7 @@ import type { ChannelInterface, Friend, FriendsState } from "../../../Context/us
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { UserContext } from "../../../Context/main";
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import api from "../../../Tools/axios";
 
 export default function ChannelAddFriend(
     {
@@ -25,42 +26,24 @@ export default function ChannelAddFriend(
     };
     const [members, setMembers] = React.useState([] as any[]);
     const AuthUser = useContext(UserContext);
-    const friends = friendsState.AcceptedFriends.filter((friend:Friend) => {
+    const friends = friendsState.AcceptedFriends.filter((friend: Friend) => {
         return !members.find((member) => member.username === friend.user);
     }
     )
 
     const fetchMembers = async () => {
         try {
-            const response = await fetch(`http://localhost:4000/groups/members/${chat.id}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                    }
-                })
-            const data = await response.json();
+            const { data } = await api.get(`/groups/members/${chat.id}`);
             setMembers(data.members);
         } catch (error) {
             //console.log('error:', error);
         }
     }
 
-    const inviteFriend = async (member:Friend) => {
+    const inviteFriend = async (member: Friend) => {
         try {
-            const url = `http://localhost:4000/groups/send/${member.user}/${chat.name}`;
-            //console.log('url:', url);
-            const response = await fetch(`http://localhost:4000/groups/send/${member.user}/${chat.name}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${AuthUser.access_token}`
-                    }
-                })
-            const data = await response.json();
-            //console.log('data:', data);
+            await api.post(`/groups/send/${member.user}/${chat.name}`);
+            //console.log('invited');
         } catch (error) {
             //console.log('error:', error);
         }
@@ -123,7 +106,7 @@ export default function ChannelAddFriend(
                                             <Typography>{member.user}</Typography>
                                         </Stack>
                                         <Stack direction="row" spacing={2} alignItems="center">
-                                            <IconButton onClick={(e)=>{
+                                            <IconButton onClick={(e) => {
                                                 inviteFriend(member)
                                             }
                                             }>
@@ -134,7 +117,7 @@ export default function ChannelAddFriend(
                                                             color: 'rgba(255, 255, 255, 1)',
                                                         }
                                                     }
-                                                
+
                                                 } />
                                             </IconButton>
                                         </Stack>

@@ -11,9 +11,9 @@ import SendIcon from "@mui/icons-material/Send";
 import { UserContext } from "../Context/main";
 import Message from "./Message";
 import { type FriendsState, type Message as MessageInterface } from "../Context/user";
+import api from "../Tools/axios";
 
-
-import { init } from 'emoji-mart'
+import data from '@emoji-mart/data'
 
 import Picker from '@emoji-mart/react'
 import { ArrowBack, Settings } from "@mui/icons-material";
@@ -22,7 +22,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 
-const checkWhiteSpace = (str: string) : boolean => {
+const checkWhiteSpace = (str: string): boolean => {
   return !str.replace(/\s/g, '').length;
 }
 
@@ -34,7 +34,7 @@ interface ChatListProps {
   friendsState: FriendsState;
 }
 
-export default function ChatBar({ socket, selected, setSelected, friendsState,setFriendsState }: ChatListProps) {
+export default function ChatBar({ socket, selected, setSelected, friendsState, setFriendsState }: ChatListProps) {
   const AuthUser = useContext(UserContext);
   const [messages, setMessages] = React.useState<MessageInterface[]>(AuthUser.messages);
   const user = friendsState.AcceptedFriends.find((element) => element.user === selected);
@@ -42,7 +42,6 @@ export default function ChatBar({ socket, selected, setSelected, friendsState,se
   const [isPickerVisible, setIsPickerVisible] = React.useState(false);
   const textFieldRef = React.useRef<HTMLInputElement>(null);
   const [messageText, setMessageText] = React.useState("");
-  let lastDiv = React.useRef<HTMLDivElement>(null);
 
   function App() {
     return (
@@ -60,20 +59,7 @@ export default function ChatBar({ socket, selected, setSelected, friendsState,se
     if (user === undefined) {
       return;
     }
-    const url = `http://localhost:4000/messages/room/${user.roomId}`;
-
-    const response = await fetch(url,
-      {
-        headers: {
-          "Authorization": `Bearer ${AuthUser.access_token}`
-        }
-      });
-    if (!response.ok) {
-      //console.log("error:", response);
-      return;
-    }
-
-    const data = await response.json();
+    const { data } = await api.get(`/messages/room/${user.roomId}`);
     setMessages(data.messages);
     AuthUser.messages = data.messages;
   }
@@ -82,14 +68,14 @@ export default function ChatBar({ socket, selected, setSelected, friendsState,se
     if (user === undefined) {
       return;
     }
-    socket.emit("joinRoom", {roomId: user.roomId.toString(), type: 'dm'});
+    socket.emit("joinRoom", { roomId: user.roomId.toString(), type: 'dm' });
     fetchMessages();
-    
+
     user.unseenNum = 0;
 
-    setFriendsState((prev:any)=>{
-      const newFriends = prev.AcceptedFriends.map((friend:any)=>{
-        if(friend.user === selected){
+    setFriendsState((prev: any) => {
+      const newFriends = prev.AcceptedFriends.map((friend: any) => {
+        if (friend.user === selected) {
           friend.unseenNum = 0;
         }
         return friend;
@@ -113,7 +99,7 @@ export default function ChatBar({ socket, selected, setSelected, friendsState,se
       }
 
       socket.emit('seenRightAway', {
-        sender: AuthUser.username, receiver: selected, roomId: user.roomId, type:"dm"
+        sender: AuthUser.username, receiver: selected, roomId: user.roomId, type: "dm"
       })
       if (arg.message.reciepient === AuthUser.username) {
         return;
@@ -133,14 +119,12 @@ export default function ChatBar({ socket, selected, setSelected, friendsState,se
         created_on: new Date().toString()
       })
       setTimeout(() => {
-        lastDiv.current?.scrollIntoView({ behavior: "smooth" });
-      }
-      , 250);
+        if (parentDiv.current) parentDiv.current.scrollTop = parentDiv.current.scrollHeight;
+      }, 250);
     })
     setTimeout(() => {
-      lastDiv.current?.scrollIntoView({ behavior: "smooth" });
-    }
-    , 1000);
+      if (parentDiv.current) parentDiv.current.scrollTop = parentDiv.current.scrollHeight;
+    }, 1000);
 
     return () => {
       socket.off("joinRoom")
@@ -150,9 +134,9 @@ export default function ChatBar({ socket, selected, setSelected, friendsState,se
       // alert(1)
       user.unseenNum = 0;
       // user.unseenNum = 0;
-      setFriendsState((prev:any)=>{
-        const newFriends = prev.AcceptedFriends.map((friend:any)=>{
-          if(friend.user === selected){
+      setFriendsState((prev: any) => {
+        const newFriends = prev.AcceptedFriends.map((friend: any) => {
+          if (friend.user === selected) {
             friend.unseenNum = 0;
           }
           return friend;
@@ -163,7 +147,7 @@ export default function ChatBar({ socket, selected, setSelected, friendsState,se
         }
       }
       )
-  }
+    }
   }, [selected]);
 
   if (!user) {
@@ -194,9 +178,8 @@ export default function ChatBar({ socket, selected, setSelected, friendsState,se
         created_on: new Date().toString()
       })
       setTimeout(() => {
-        lastDiv.current?.scrollIntoView({ behavior: "smooth" });
-      }
-      , 250);
+        if (parentDiv.current) parentDiv.current.scrollTop = parentDiv.current.scrollHeight;
+      }, 250);
     }
   }
 
@@ -206,201 +189,194 @@ export default function ChatBar({ socket, selected, setSelected, friendsState,se
       direction={"column"}
       justifyContent={"space-between"}
       alignItems={"stretch"}
-      spacing={3}
-      maxWidth={"800px"}
       sx={{
-        width: "90%",
+        width: "100%",
+        maxWidth: "760px",
         margin: "auto",
         height: "100%",
+        overflow: "hidden",
+        gap: "12px",
       }}
     >
 
 
+      {/* ── Header ── */}
       <Stack
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        spacing={3}
         sx={{
-          background: "#222E35",
-          borderRadius: "25px",
-          padding: "10px",
+          background: "rgba(34,46,53,0.85)",
+          backdropFilter: "blur(12px)",
+          borderRadius: "16px",
+          border: "1px solid rgba(255,255,255,0.06)",
+          padding: "10px 14px",
+          flexShrink: 0,
         }}
       >
+        {/* Back arrow – mobile only */}
         <Box sx={{
           display: 'none',
-          justifyContent: 'center',
-          alignItems: 'center',
-          '&:hover': {
-            cursor: 'pointer'
-          },
-          '@media (max-width: 800px)': {
-            display: 'flex'
-          }
-
+          '@media (max-width: 800px)': { display: 'flex' },
         }}>
-          <IconButton onClick={
-            () => {
-              setSelected("");
-            }
-          } sx={
-            {
-            }
-          }>
-            <ArrowBack sx={
-              {
-                color: '#FCFCF6'
-              }
-            } />
+          <IconButton onClick={() => setSelected("")} size="small">
+            <ArrowBack sx={{ color: '#FCFCF6', fontSize: '20px' }} />
           </IconButton>
         </Box>
-        <Link to={`/profile/${user.user}`} style={{ textDecoration: 'none' }}>
-        <Stack direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          spacing={3}>
-          <Avatar src={user.image} />
-          <Box>
-            <Typography>{user.user}</Typography>
 
-          </Box>
-        </Stack>
-            </Link>
+        {/* User info */}
+        <Link to={`/profile/${user.user}`} style={{ textDecoration: 'none', flex: 1 }}>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Avatar
+              src={user.image}
+              sx={{ width: 40, height: 40, border: "2px solid rgba(31,144,184,0.5)" }}
+            />
+            <Box>
+              <Typography sx={{ color: "#fff", fontWeight: 600, fontSize: "0.95rem", lineHeight: 1.2 }}>
+                {user.user}
+              </Typography>
+            </Box>
+          </Stack>
+        </Link>
+
         <Box>
-            <ChatBarSettings user={user} socket={socket} />
+          <ChatBarSettings user={user} socket={socket} />
         </Box>
       </Stack>
-      <Box height={"100%"} sx={
-        {
-          overflowY: "scroll",
-          scrollbarWidth: "none"
-        }
-      } ref={parentDiv}>
-        {
-          messages.length === 0 ? <Typography textAlign={'center'}>Start the conversation by sending a message</Typography> :
-            messages.map(
-              (element: MessageInterface, key: number) : JSX.Element => {
-                return (
-                  <Message lastDiv={lastDiv} key={key} sender={element.sender_name} message={element} previousMessage={messages[key - 1]} >
-                    {
-                      element.content
-                    }
-                    </Message>
-                  );
-                }
-              )
-          }
-        </Box>
-      {/* Input */}
-
-      <Stack
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-        spacing={3}
+      {/* ── Messages area ── */}
+      <Box
+        ref={parentDiv}
         sx={{
-          background: "#222E35",
-          borderRadius: "25px",
-          padding: "10px 20px",
-          position: "relative"
-
+          flex: 1,
+          minHeight: 0,
+          overflowY: "auto",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+          padding: "0 4px",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
+        {
+          messages.length === 0 ? (
+            <Box sx={{ margin: "auto", textAlign: "center" }}>
+              <Typography sx={{ color: "rgba(255,255,255,0.35)", fontSize: "0.9rem" }}>
+                No messages yet — say hello! 👋
+              </Typography>
+            </Box>
+          ) : messages.map(
+            (element: MessageInterface, key: number): JSX.Element => (
+              <Message
+                lastDiv={null}
+                key={key}
+                sender={element.sender_name}
+                message={element}
+                previousMessage={messages[key - 1]}
+              >
+                {element.content}
+              </Message>
+            )
+          )
+        }
+      </Box>
+      {/* Input */}
 
+      {/* ── Input bar ── */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        sx={{
+          background: "rgba(34,46,53,0.9)",
+          backdropFilter: "blur(12px)",
+          borderRadius: "16px",
+          border: "1px solid rgba(255,255,255,0.06)",
+          padding: "8px 12px",
+          position: "relative",
+          flexShrink: 0,
+          gap: "6px",
+        }}
+      >
+        {/* Emoji picker */}
+        <div style={{
+          position: "absolute",
+          bottom: "60px",
+          right: 0,
+          display: isPickerVisible ? "block" : "none",
+          zIndex: 10,
+        }}>
+          <App />
+        </div>
+
+        {/* Emoji toggle */}
+        <IconButton
+          onClick={() => setIsPickerVisible(!isPickerVisible)}
+          size="small"
+          sx={{ color: "white", opacity: isPickerVisible ? 1 : 0.5, flexShrink: 0 }}
+        >
+          <Typography sx={{ fontSize: "20px", lineHeight: 1 }}>&#128516;</Typography>
+        </IconButton>
+
+        {/* Text field */}
         <TextField
           ref={textFieldRef}
           variant="standard"
           onChange={(e) => setMessageText(e.target.value)}
           value={messageText}
           onKeyDown={handle_change}
-
-          sx={{
-            width: "80%",
-            borderRadius: "25px",
-            color: "white",
-
-          }}
+          fullWidth
           placeholder="Type a message..."
           InputProps={{
             disableUnderline: true,
             sx: {
-              borderBottom: "1px solid #fff",
               color: "white",
+              fontSize: "0.95rem",
+              padding: "4px 0",
+              '& input::placeholder': {
+                color: 'rgba(255,255,255,0.35)',
+                opacity: 1,
+              },
             },
           }}
+          sx={{ flex: 1 }}
         />
-        <div style={
-          {
-            position: "absolute",
-            bottom: "55px",
-            right: 0,
-            display: isPickerVisible ? "block" : "none",
-          }
-        }>
-          <App />
-        </div>
 
-
-        <Box sx={
-          {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: "0 !important",
-          }
-        
-        }>
-
-          <IconButton onClick={
-            () => {
-              setIsPickerVisible(!isPickerVisible);
-            }
-          }  sx={
-            {
-              marginLeft: "10px",
-            }
-          }>
-                              <Typography sx={{ color: "white", fontSize: "18px",
-          filter: isPickerVisible ? "none" : "grayscale(100%)",
-        }} >
-            	&#128516;
-
-          </Typography>
-          </IconButton>
-          <IconButton disabled={
-            messageText === "" || checkWhiteSpace(messageText)
-          
-          } onClick={
-            () => {
-              socket.emit("Messages", { content: messageText, sender: AuthUser.username, receiver: selected, roomId: user.roomId });
-              setMessageText("");
-              setMessages([...AuthUser.messages, {
-                content: messageText,
-                sender_name: AuthUser.username,
-                reciepient: selected,
-                created_on: new Date().toString()
-              }])
-              AuthUser.messages.push({
-                content: messageText,
-                sender_name: AuthUser.username,
-                reciepient: selected,
-                created_on: new Date().toString()
-              })
-              setTimeout(() => {
-                lastDiv.current?.scrollIntoView({ behavior: "smooth" });
-              }
-              , 250);
-            }
-          } >
-          <SendIcon sx={
-              {
-                color: messageText === "" || checkWhiteSpace(messageText) ? "gray" : "white",
-              }
-            } />
-          </IconButton>
-
-        </Box>
-
+        {/* Send button */}
+        <IconButton
+          disabled={messageText === "" || checkWhiteSpace(messageText)}
+          onClick={() => {
+            socket.emit("Messages", { content: messageText, sender: AuthUser.username, receiver: selected, roomId: user.roomId });
+            setMessageText("");
+            setMessages([...AuthUser.messages, {
+              content: messageText,
+              sender_name: AuthUser.username,
+              reciepient: selected,
+              created_on: new Date().toString()
+            }]);
+            AuthUser.messages.push({
+              content: messageText,
+              sender_name: AuthUser.username,
+              reciepient: selected,
+              created_on: new Date().toString()
+            });
+            setTimeout(() => {
+              if (parentDiv.current) parentDiv.current.scrollTop = parentDiv.current.scrollHeight;
+            }, 250);
+          }}
+          size="small"
+          sx={{
+            flexShrink: 0,
+            backgroundColor: messageText === "" || checkWhiteSpace(messageText)
+              ? "transparent"
+              : "#1f90b8",
+            borderRadius: "10px",
+            padding: "8px",
+            transition: "background-color 0.2s ease",
+            '&:disabled': { opacity: 0.3 },
+            '&:hover:not(:disabled)': { backgroundColor: "#1a7da0" },
+          }}
+        >
+          <SendIcon sx={{ color: "white", fontSize: "18px" }} />
+        </IconButton>
       </Stack>
     </Stack>
 

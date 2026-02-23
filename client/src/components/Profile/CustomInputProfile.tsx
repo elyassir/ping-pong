@@ -2,11 +2,12 @@ import { CircularProgress, InputAdornment, TextField } from "@mui/material";
 import React from "react";
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import api from "../Tools/axios";
 
-function hasWhiteSpace(s:string) {
-	return /\s/.test(s);
-  }
-  
+function hasWhiteSpace(s: string) {
+    return /\s/.test(s);
+}
+
 
 export default function CustomInputProfile(
     { placeholder, value, setValue }: { placeholder: string, value: string, setValue: any }
@@ -22,25 +23,16 @@ export default function CustomInputProfile(
 
     const checkNameIsReserved = async (name: string) => {
         try {
-            const url = `http://localhost:4000/users/check/${name}`;
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            });
-            const data = await response.json();
-            if (response.ok === false) {
-                setError(true);
-                setHelperText(data.error);
-            } else {
-                setError(false);
-                setHelperText(' ');
-            }
+            const { data } = await api.get(`/users/check/${name}`);
+            setError(false);
+            setHelperText(' ');
             setLoading(false);
         }
-        catch (error: any) { }
+        catch (error: any) {
+            setError(true);
+            setHelperText(error.response?.data?.error || 'Username is taken');
+            setLoading(false);
+        }
     }
 
 

@@ -4,6 +4,7 @@ import { Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../Context/main";
 import { toast } from "react-toastify";
+import api from "./axios";
 
 export async function fetchForNotifications(socket: any) {
   if (socket === null) {
@@ -26,13 +27,14 @@ export function NotFoundPage() {
         Oops! The page you're looking for doesn't exist.
       </p>
       <Button variant="contained" color="primary">
-        <Link to="/" style={{ textDecoration: 'none', color: '#fff',
-        backgroundColor: '#ff5252',
-        padding: '10px 20px',
-        borderRadius: '5px' ,
-        textAlign: 'center',
-        textSizeAdjust: '100%',
-        display: 'inline-block',
+        <Link to="/" style={{
+          textDecoration: 'none', color: '#fff',
+          backgroundColor: '#ff5252',
+          padding: '10px 20px',
+          borderRadius: '5px',
+          textAlign: 'center',
+          textSizeAdjust: '100%',
+          display: 'inline-block',
         }}>
           Go back to Home
         </Link>
@@ -61,23 +63,10 @@ export function TwoFactorAuth(props: TwoFactorAuthProps) {
 
   const handleTwoFactorAuth = async (code: string) => {
     try {
-      const url = "http://localhost:4000/2fa/verify";
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${AuthUser.access_token}`
-        },
-        body: JSON.stringify({ token: code })
-      });
-      if (response.ok === false) {
-        toast.error("Error: code is invalid")
-        return;
-      }
-      const data = await response.json();
+      const response = await api.post("/2fa/verify", { token: code });
       toast.success("2fa enabled");
-      AuthUser.access_token = data.access_token;
-      window.localStorage.setItem("access_token", data.access_token);
+      AuthUser.access_token = response.data.access_token;
+      window.localStorage.setItem("access_token", response.data.access_token);
       setShow2fa(false);
     }
     catch (error) {
@@ -87,10 +76,10 @@ export function TwoFactorAuth(props: TwoFactorAuthProps) {
 
   useEffect(() => {
 
-      firstTime && nagigate(`/profile/${AuthUser.username}/update_info`);
+    firstTime && nagigate(`/profile/${AuthUser.username}/update_info`);
 
   }
-  , [firstTime]);
+    , [firstTime]);
 
 
   return <>
@@ -135,7 +124,7 @@ export function TwoFactorAuth(props: TwoFactorAuthProps) {
 
 }
 
-export default function ContainerFloat({ children, change }: { children: any, change? : boolean | undefined }) {
+export default function ContainerFloat({ children, change }: { children: any, change?: boolean | undefined }) {
   return (
     <div
       style={

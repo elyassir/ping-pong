@@ -101,7 +101,7 @@ export class groupService {
                     }
                 },
                 data: {
-                    image: `http://127.0.0.1:4000/users/images/${newFileName}`,
+                    image: `${process.env.UPLOAD_BASE_URL}/users/images/${newFileName}`,
                 },
                 select: {
                     id: true,
@@ -303,7 +303,7 @@ export class groupService {
                         connect: { username: req['user']['username'] }
                     },
                     type: body['type'],
-                    image: `http://127.0.0.1:4000/users/images/${newFileName}`,
+                    image: `${process.env.UPLOAD_BASE_URL}/users/images/${newFileName}`,
                     desc: body['desc']
                 }
             })
@@ -424,27 +424,27 @@ export class groupService {
             return { "error": "There has been an error fetching the members of the group" }
         }
     }
-    async getB(username:string, tocheck:string){
-        try{
-        let checks = await prisma.blocked.findFirst({
-            where:{
-                username:username
-            },
-            select:{
-                members:true
+    async getB(username: string, tocheck: string) {
+        try {
+            let checks = await prisma.blocked.findFirst({
+                where: {
+                    username: username
+                },
+                select: {
+                    members: true
+                }
+            })
+            const ret = checks.members.find((member) => member.username === tocheck)
+            if (ret) {
+                return true
             }
-        })
-        const ret = checks.members.find((member)=>member.username===tocheck)
-        if (ret){
-            return true
-        }
-        else{
+            else {
+                return false
+            }
+
+        } catch (err) {
             return false
         }
-        
-    }catch(err){
-        return false
-    }
     }
     async getMessagesOfGroup(req: Request, groupId: string) {
         try {
@@ -459,9 +459,9 @@ export class groupService {
                     created_on: true
                 }
             })
-            let newMessages = await Promise.all(messages.map(async (message)=>{
-                let ret = await this.getB(req['user']['username'],message.sender_name)
-                if (ret === true){
+            let newMessages = await Promise.all(messages.map(async (message) => {
+                let ret = await this.getB(req['user']['username'], message.sender_name)
+                if (ret === true) {
                     message.content = ""
                 }
             }))

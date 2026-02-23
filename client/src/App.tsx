@@ -117,7 +117,8 @@ function App2() {
   }
 
   React.useEffect(() => {
-    const socket = io(`http://127.0.0.1:4000`, {
+    const socketUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+    const socket = io(socketUrl, {
       extraHeaders: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
@@ -154,7 +155,7 @@ function App2() {
   }
 
   return (
-    <div>
+    <div style={{ height: "100%", overflow: "hidden" }}>
 
       <TwoFactorAuth
         show2fa={show2fa}

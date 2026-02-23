@@ -6,7 +6,4 @@ dist
 .env
 npm-debug.log*
 coverage
-.nyc_output
-test
 README.md
-uploads

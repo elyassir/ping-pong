@@ -1,6 +1,4 @@
 import { Avatar, Divider, Stack, Typography } from "@mui/material";
-import { useContext } from "react";
-import { UserContext } from "../Context/main";
 import { StyledBadge } from "../Home/LastMatchesList";
 
 interface NormalProps {

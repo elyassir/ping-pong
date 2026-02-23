@@ -1,42 +1,22 @@
 import { Box, Typography } from "@mui/material";
 import LastMatchesListHistory from "./LastMatchesListHistory";
+import "./Profile.css";
 
-export default function History({data}:any) {
+export default function History({ data }: any) {
   return (
-    <Box
-      sx={{
-        color: "white",
-        backgroundColor: "rgba(40,40,40,0.75)",
-        padding: "20px",
-        borderRadius: "20px",
-      }}
-    >
-      <Typography
-        sx={{
-          textAlign: "center",
-        }}
-        variant="h5"
-        component="h3"
-        gutterBottom
-      >
-        History
+    <Box className="glass-card" sx={{ padding: '28px', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <Typography sx={{
+        fontFamily: 'Inter, sans-serif',
+        fontWeight: 700,
+        fontSize: '0.8rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.1em',
+        color: 'rgba(255,255,255,0.4)',
+      }}>
+        Match History
       </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Box sx={
-          {
-            width: "100%",
-          }
-        }>
-          <LastMatchesListHistory data={data} />
-        </Box>
+      <Box sx={{ flex: 1, minHeight: 0 }}>
+        <LastMatchesListHistory data={data} />
       </Box>
     </Box>
   );

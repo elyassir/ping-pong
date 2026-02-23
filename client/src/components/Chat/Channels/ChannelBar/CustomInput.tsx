@@ -2,13 +2,14 @@ import { CircularProgress, InputAdornment, TextField } from "@mui/material";
 import React, { useEffect } from "react";
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import api from "../../../Tools/axios";
 
 function hasWhiteSpace(s: string) {
     return /\s/.test(s);
 }
 
 export default function CustomInput(
-    { placeholder, value, setValue, error, setError }: { placeholder: string, value: string, setValue: any, error: boolean, setError: React.Dispatch<React.SetStateAction<boolean>>}
+    { placeholder, value, setValue, error, setError }: { placeholder: string, value: string, setValue: any, error: boolean, setError: React.Dispatch<React.SetStateAction<boolean>> }
 ) {
     const [helperText, setHelperText] = React.useState(' ');
     const [loading, setLoading] = React.useState(false);
@@ -40,32 +41,23 @@ export default function CustomInput(
 
     const checkNameIsReserved = async (name: string) => {
         try {
-            const url = `http://localhost:4000/groups/check/${name}`;
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            });
-            const data = await response.json();
-            if (response.ok === false) {
-                setError(true);
-                setHelperText(data.error);
-            } else {
-                setError(false);
-                setHelperText(' ');
-            }
+            const { data } = await api.get(`/groups/check/${name}`);
+            setError(false);
+            setHelperText(' ');
             setLoading(false);
         }
-        catch (error: any) { }
+        catch (error: any) {
+            setError(true);
+            setHelperText(error.response?.data?.error || 'Name is reserved');
+            setLoading(false);
+        }
     }
 
     useEffect(() => {
         if (value.length == 0)
             checkNameIsVaild();
     }
-    , []);
+        , []);
 
     return (
         <>

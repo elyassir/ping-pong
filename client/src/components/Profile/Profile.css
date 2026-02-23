@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rubik:wght@400;500;600&display=swap');
+
+/* ── Page wrapper ── */
+.profile-page {
+    min-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    padding-bottom: 40px;
+}
+
+.profile-page::-webkit-scrollbar {
+    display: none;
+}
+
+/* ── Glass card ── */
+.glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── Avatar ring ── */
+.avatar-ring {
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(135deg, #1f90b8 0%, #0f4c6e 100%);
+    display: inline-flex;
+    box-shadow: 0 0 20px rgba(31, 144, 184, 0.35);
+}
+
+/* ── Level progress bar ── */
+.level-bar-track {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 100px;
+    height: 8px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.level-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, #1f90b8, #34d399);
+    transition: width 0.6s ease;
+    box-shadow: 0 0 10px rgba(31, 144, 184, 0.5);
+}
+
+/* ── Stat pill ── */
+.stat-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 14px 20px;
+    text-align: center;
+    flex: 1;
+    min-width: 80px;
+}
+
+/* ── Match row ── */
+.match-row {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.15s ease;
+}
+
+.match-row:hover {
+    background: rgba(255, 255, 255, 0.065);
+}
+
+/* ── Achievement badge ── */
+.badge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: default;
+}
+
+.badge-item.unlocked {
+    border-color: rgba(31, 144, 184, 0.3);
+    box-shadow: 0 0 14px rgba(31, 144, 184, 0.12);
+}
+
+.badge-item.locked {
+    filter: grayscale(1) opacity(0.35);
+}

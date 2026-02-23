@@ -3,11 +3,11 @@ import PeopleIcon from '@mui/icons-material/People';
 import React, { useContext } from "react";
 import type { ChannelInterface, FriendsState } from "../../../Context/user";
 import MoreOptionsMember from "./MoreOptionsMember";
-
 import './style.css'
 import useGetMembers from "./Hooks/getMembers";
 import { UserContext } from "../../../Context/main";
 import { Link } from "react-router-dom";
+import api from "../../../Tools/axios";
 export interface MembersInterface {
   username: string,
   image: string,
@@ -39,18 +39,7 @@ export default function ChannelListMembers(
 
   const handleUnBanMember = async (username: string) => {
     try {
-      const url = `http://localhost:4000/groups/${chat.id}/unban/${username}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      );
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-        return;
-      }
+      await api.post(`/groups/${chat.id}/unban/${username}`);
       setBannedMembers(bannedMembers.filter((member) => member.username !== username));
     } catch (error) {
       console.log('error:', error);
@@ -166,16 +155,16 @@ export default function ChannelListMembers(
                     </Stack>
                     {
                       AuthUser.username !== member.username ?
-                            <MoreOptionsMember
-                              setMutedMembers={setMuteMembers}
-                              mutedMembers={muteMembers}
-                              chat={chat}
-                              member={member}
-                              setMembers={setMembers}
-                              members={members}
-                              setFriendsState={setFriendsState}
-                              friendsState={friendsState}
-                            />
+                        <MoreOptionsMember
+                          setMutedMembers={setMuteMembers}
+                          mutedMembers={muteMembers}
+                          chat={chat}
+                          member={member}
+                          setMembers={setMembers}
+                          members={members}
+                          setFriendsState={setFriendsState}
+                          friendsState={friendsState}
+                        />
                         : null
                     }
                   </Stack>

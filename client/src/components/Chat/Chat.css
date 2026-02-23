@@ -1,7 +1,34 @@
-#chat-container {
-    background: url(https://web.telegram.org/a/chat-bg-pattern-dark.ad38368a9e8140d0ac7d.png);
-    background-position: top auto;
-    background-size: 510px auto;
-    background-repeat: repeat;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rubik:wght@400;500;600&display=swap');
 
+/* Prevent any page-level scrollbar while the chat is mounted */
+body:has(#chat-container) {
+  overflow: hidden;
+}
+
+#chat-container {
+  background: url(https://web.telegram.org/a/chat-bg-pattern-dark.ad38368a9e8140d0ac7d.png);
+  background-position: top left;
+  background-size: 510px auto;
+  background-repeat: repeat;
+  font-family: 'Inter', 'Rubik', sans-serif;
+  gap: 10px;
+}
+
+/* Universal scrollbar hide for webkit inside chat */
+#chat-container *::-webkit-scrollbar {
+  display: none;
+}
+
+#chat-container * {
+  scrollbar-width: none;
+}
+
+/* Smooth hover transitions for list items */
+#chat-container .MuiStack-root {
+  transition: background-color 0.15s ease;
+}
+
+/* Better focus ring on text input */
+#chat-container .MuiInputBase-root:focus-within {
+  outline: none;
 }

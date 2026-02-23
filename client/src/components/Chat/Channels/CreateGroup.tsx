@@ -14,6 +14,7 @@ import type { ChannelInterface } from '../../Context/user';
 import { toast } from 'react-toastify';
 import CustomInput from './ChannelBar/CustomInput';
 import { CheckCircle } from '@mui/icons-material';
+import api from '../../Tools/axios';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -39,7 +40,7 @@ const CreateGroup = ({ onClickFun, groups, setGroups }: {
   /*
     
   */
-  const [error, setError] = React.useState(false); 
+  const [error, setError] = React.useState(false);
   const [groupName, setGroupName] = React.useState('');
   const [groupDescription, setGroupDescription] = React.useState('');
   const [groupImage, setGroupImage] = React.useState('');
@@ -56,21 +57,11 @@ const CreateGroup = ({ onClickFun, groups, setGroups }: {
 
   const fetchGroups = async () => {
     try {
-      const response = await fetch('http://localhost:4000/groups', {
-        headers: {
-          'Authorization': `Bearer ${AuthUser.access_token}`
-        }
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error('Error fetching groups');
-      }
-      //console.log(data);
+      const { data } = await api.get('/groups');
       setGroups(data);
     }
     catch (e: any) {
       toast.error('Error fetching groups');
-      //console.log('Error fetching groups', e);
     }
   }
 
@@ -84,25 +75,14 @@ const CreateGroup = ({ onClickFun, groups, setGroups }: {
     formData.append('desc', groupDescription);
 
     try {
-      const response = await fetch('http://127.0.0.1:4000/groups/create', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${AuthUser.access_token}`
-        },
-        body: formData
+      await api.post('/groups/create', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
-      //console.log(response);
-      if (!response.ok) {
-        throw new Error('Error creating group');
-      }
-      //console.log(data);
       toast.success('Group created successfully');
-      //console.log('-------------------------');
       fetchGroups();
     }
     catch (e: any) {
       toast.error('Error creating group');
-      //console.log('Error creating group', e);
     }
   }
 
@@ -187,7 +167,7 @@ const CreateGroup = ({ onClickFun, groups, setGroups }: {
                     setGroupImage(e.target.files[0])
                   }
                 }
-              
+
               } type="file" accept='image/*' />
             </Button>
             <br />

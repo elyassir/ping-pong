@@ -14,6 +14,7 @@ import type { ChannelInterface } from '../../../Context/user';
 import UpdateChannel from './UpdateChannel';
 import { toast } from 'react-toastify';
 import CustomInput from './CustomInput';
+import api from '../../../Tools/axios';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -50,59 +51,32 @@ const UpdateChannelInfo = ({ channel, onClickFun }: { channel: ChannelInterface,
   };
 
   const handleCreateGroup = async () => {
-
     try {
-      const response = await fetch(`http://127.0.0.1:4000/groups/${channel.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${AuthUser.access_token}`
-        },
-        body: JSON.stringify({
-          name: groupName,
-          type: type,
-          passcode: password,
-          desc: groupDescription
-        })
+      await api.put(`/groups/${channel.id}`, {
+        name: groupName,
+        type: type,
+        passcode: password,
+        desc: groupDescription
       });
-      //console.log(response);
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error('Error creating group');
-      }
-      //console.log('-------------------------');
-
     }
     catch (e: any) {
-      //console.log('Error creating group', e);
+      //console.log('Error updating group', e);
     }
     if (inputRef.current?.files !== null && inputRef.current?.files !== undefined && inputRef.current?.files.length !== 0) {
       try {
         const formData = new FormData();
         const file = inputRef.current.files[0];
         formData.append('file', file);
-        const response = await fetch(`http://127.0.0.1:4000/groups/${channel.id}/update_image`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${AuthUser.access_token}`
-          },
-          body: formData
+        const { data } = await api.put(`/groups/${channel.id}/update_image`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
         });
-        //console.log(response);
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error('Error creating group');
-        }
-        //console.log('-------------------------');
         channel.image = data.image;
         toast.success('Group image updated');
       }
       catch (e: any) {
-        //console.log('Error creating group', e);
+        //console.log('Error updating group image', e);
       }
     }
-
-
   }
 
 

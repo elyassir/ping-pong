@@ -9,6 +9,7 @@ import { UserContext } from "../Context/main";
 import CustomInputProfile from "./CustomInputProfile";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import api from "../Tools/axios";
 
 interface ChangeInfoFormProps {
   data: any;
@@ -35,20 +36,7 @@ export default function ChangeInfoForm({
   async function handleUpdate() {
     try {
       if (bio !== data.bio) {
-        const url = "http://localhost:4000/users/update/bio";
-        const response = await fetch(url, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify({
-            bio: bio,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        await api.put("/users/update/bio", { bio: bio });
         setData((prev: any) => ({ ...prev, bio: bio }));
         setChangeInfo(false);
       }
@@ -58,21 +46,8 @@ export default function ChangeInfoForm({
     }
     try {
       if (username !== data.username) {
-        const url = "http://localhost:4000/users/update/username";
-        const response = await fetch(url, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify({
-            username: username,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const access_token = await response.text();
+        const { data: responseData } = await api.put("/users/update/username", { username: username });
+        const access_token = responseData;
         localStorage.setItem("access_token", access_token);
         AuthUser.username = username;
         AuthUser.access_token = access_token;
@@ -90,26 +65,16 @@ export default function ChangeInfoForm({
         const file = inputRef.current.files[0];
         const formData = new FormData();
         formData.append("file", file);
-        const url = "http://localhost:4000/users/update_img";
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
-          },
-          body: formData
+        const { data: imgData } = await api.post("/users/update_img", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
         });
-
-        if (!response.ok) {
-          throw new Error("Request is not ok !");
-        }
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = () => {
           AuthUser.image = reader.result as string;
           setSrcImage(reader.result as string)
         }
-        const data = await response.json();
-        AuthUser.image = data.image;
+        AuthUser.image = imgData.image;
         setChangeInfo(false);
       }
     } catch (error: any) {
@@ -127,119 +92,119 @@ export default function ChangeInfoForm({
     <>
       <ContainerFloat change={change}>
 
-      <Box
-        className="form-popup"
-        sx={{
-          width: "500px",
-          color: "black",
-          backgroundColor: "#fcfcf6",
-        }}
-      >
         <Box
-          sx={{ padding: "20px", borderRadius: "25px" }}
+          className="form-popup"
+          sx={{
+            width: "500px",
+            color: "black",
+            backgroundColor: "#fcfcf6",
+          }}
         >
           <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-            }}
+            sx={{ padding: "20px", borderRadius: "25px" }}
           >
-            <Box>
-              <Typography
-                sx={{ textAlign: "center", marginBottom: "20px" }}
-                variant="h4"
-              >
-                Update Info
-              </Typography>
-              <CancelIcon
-                onClick={() => {
-                  setChangeInfo(false);
-                }}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <Box>
+                <Typography
+                  sx={{ textAlign: "center", marginBottom: "20px" }}
+                  variant="h4"
+                >
+                  Update Info
+                </Typography>
+                <CancelIcon
+                  onClick={() => {
+                    setChangeInfo(false);
+                  }}
+                  sx={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "10px",
+                    cursor: "pointer",
+                  }}
+                />
+              </Box>
+              <Divider
                 sx={{
-                  position: "absolute",
-                  right: "10px",
-                  top: "10px",
-                  cursor: "pointer",
+                  width: "100%",
                 }}
               />
+              <Box>
+                <UploadImage inputRef={inputRef} />
+              </Box>
             </Box>
-            <Divider
-              sx={{
-                width: "100%",
+            <Typography sx={{ padding: "10px 0;" }}>Username</Typography>
+            <CustomInputProfile value={username} setValue={setUsername} placeholder="Enter username" />
+
+            <Typography sx={{ padding: "10px 0;" }}>Bio</Typography>
+            <TextField
+              fullWidth
+              onChange={(e) => {
+                setBio(e.target.value);
               }}
+              value={bio}
+              type="text"
+              placeholder="Enter bio"
+              name="bio"
             />
-            <Box>
-              <UploadImage inputRef={inputRef} />
-            </Box>
-          </Box>
-          <Typography sx={{ padding: "10px 0;" }}>Username</Typography>
-          <CustomInputProfile value={username} setValue={setUsername} placeholder="Enter username" />
-
-          <Typography sx={{ padding: "10px 0;" }}>Bio</Typography>
-          <TextField
-            fullWidth
-            onChange={(e) => {
-              setBio(e.target.value);
-            }}
-            value={bio}
-            type="text"
-            placeholder="Enter bio"
-            name="bio"
-          />
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              margin: "20px 0 5px",
-            }}
-          >
-            <Button
-              onClick={(e) => {
-                setLoading(true);
-                setChangeInfo(false);
-                handleUpdate();
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+                margin: "20px 0 5px",
               }}
-              sx={{ margin: "5px" }}
-              variant="contained"
-              type="submit"
             >
-              Update
-            </Button>
-            {
-              change ? <Link to={`/`}>
               <Button
-
-            sx={{ margin: "5px" }}
-            variant="contained"
-            type="submit"
-            color="error"
-            >
-            Cancel
-            </Button>
-              </Link> 
-              :
-              <Button
-              onClick={
-                () => {
+                onClick={(e) => {
+                  setLoading(true);
                   setChangeInfo(false);
-                }
-              }
+                  handleUpdate();
+                }}
+                sx={{ margin: "5px" }}
+                variant="contained"
+                type="submit"
+              >
+                Update
+              </Button>
+              {
+                change ? <Link to={`/`}>
+                  <Button
 
-            sx={{ margin: "5px" }}
-            variant="contained"
-            type="submit"
-            color="error"
-            >
-            Cancel
-            </Button>
-            }
+                    sx={{ margin: "5px" }}
+                    variant="contained"
+                    type="submit"
+                    color="error"
+                  >
+                    Cancel
+                  </Button>
+                </Link>
+                  :
+                  <Button
+                    onClick={
+                      () => {
+                        setChangeInfo(false);
+                      }
+                    }
+
+                    sx={{ margin: "5px" }}
+                    variant="contained"
+                    type="submit"
+                    color="error"
+                  >
+                    Cancel
+                  </Button>
+              }
+            </Box>
           </Box>
         </Box>
-      </Box>
       </ContainerFloat>
 
     </>

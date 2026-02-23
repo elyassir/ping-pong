@@ -1,35 +1,113 @@
 services:
+
+  # ─── PostgreSQL ─────────────────────────────────────────────────────────────
   db:
-    image: postgres:18
-    ports:
-      - "${POSTGRES_PORT}:5432"
+    image: postgres:16-alpine
+    restart: unless-stopped
+    networks:
+      - internal
     volumes:
-      - db-data:/var/lib/postgresql
+      - db-data:/var/lib/postgresql/data    # /data suffix is required — without it, data is NOT persisted
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-  front:
-    image: front
-    build:
-      context: ./client
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_DB}
+    # Uncomment the lines below ONLY for local debugging:
     ports:
-      - "3000:3000"
-    depends_on:
-      - db
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  # ─── Backend (NestJS) ───────────────────────────────────────────────────────
   backend:
     image: backend
     build:
       context: ./api
-    ports:
-      - "4000:4000"
-      - "5555:5555"
-    depends_on:
-      - db
-      - front
+      target: runner
+    restart: unless-stopped
+    networks:
+      - internal
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      NODE_ENV: production
     volumes:
       - upload-vol:/app/uploads
-     
+    depends_on:
+      db:
+        condition: service_healthy    # waits for real pg_isready health, not just container start
+    # Port 4000 is intentionally NOT exposed to the host.
+    # Nginx proxies /api/* to backend:4000 over the internal network.
+    # Uncomment ONLY for local debugging:
+    # ports:
+    #   - "127.0.0.1:4000:4000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:4000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  # ─── Frontend (React/Vite served by Nginx) ──────────────────────────────────
+  frontend:
+    image: front
+    build:
+      context: ./client
+      target: runner
+    restart: unless-stopped
+    networks:
+      - internal
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
+  # ─── Nginx Reverse Proxy (the only public-facing service) ─────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    networks:
+      - internal
+    ports:
+      - "80:80"
+      # Uncomment when you have TLS certificates ready (Let's Encrypt / ACM):
+      # - "443:443"
+    volumes:
+      - ./client/nginx.conf:/etc/nginx/conf.d/app.conf:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 64m
+
+networks:
+  internal:
+    driver: bridge
 
 volumes:
   db-data:

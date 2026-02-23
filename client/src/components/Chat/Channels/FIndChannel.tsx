@@ -1,7 +1,8 @@
 import React from 'react';
-import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Input, MenuItem, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Input, Stack, Typography } from '@mui/material';
 import { Cancel } from '@mui/icons-material';
 import { toast } from 'react-toastify';
+import api from '../../Tools/axios';
 
 export default function SearchChannel({ onClickFun, setCurrentChannels, currentChannels }: any) {
     const [channels, setChannels] = React.useState([
@@ -26,48 +27,22 @@ export default function SearchChannel({ onClickFun, setCurrentChannels, currentC
             return
         }
         try {
-            const url = `http://localhost:4000/groups/search/${e.target.value}`
-            //console.log(url)
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
-                    'Content-Type': 'application/json',
-                }
-            })
-            const data = await response.json()
-            //console.log(data)
+            const { data } = await api.get(`/groups/search/${e.target.value}`);
             setChannels(data)
-        } catch (e) {
-            //console.log(e)
+        } catch (err) {
+            //console.log(err)
         }
     }
 
-    const handleJoinChannel = async (channel : any, passcode : string ) => {
+    const handleJoinChannel = async (channel: any, passcode: string) => {
         try {
-            const url = `http://localhost:4000/groups/add/${channel.id}/${passcode}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
-                    'Content-Type': 'application/json',
-                }
-            })
-            //console.log(response)
-            if (response.ok === false) {
-                toast.error('Error joining channel')
-                return
-            }
-
-            const data = await response.json()
-            //console.log(data)
-            setCurrentChannels((prev:any) => {
+            await api.post(`/groups/add/${channel.id}/${passcode}`);
+            setCurrentChannels((prev: any) => {
                 return [...prev, channel]
-                }
-            )
+            })
             toast.success('Joined channel')
-        } catch (e) {
-            //console.log(e)
+        } catch (e: any) {
+            toast.error('Error joining channel')
         }
         handleClose()
     }
@@ -81,7 +56,7 @@ export default function SearchChannel({ onClickFun, setCurrentChannels, currentC
                     color: 'white',
                     fontSize: '1rem',
                     padding: '0px 20px 10px 20px',
-          
+
                 }
 
             }>
@@ -176,7 +151,7 @@ export default function SearchChannel({ onClickFun, setCurrentChannels, currentC
                                     {
                                         PublicChannels.map((channel: any, index: number) => {
                                             let isAlreadyIn = false
-                                            currentChannels.forEach((ch:any) => {
+                                            currentChannels.forEach((ch: any) => {
                                                 if (ch.id === channel.id) {
                                                     isAlreadyIn = true
                                                     return
@@ -218,8 +193,8 @@ export default function SearchChannel({ onClickFun, setCurrentChannels, currentC
                                                             () => {
                                                                 handleJoinChannel(channel, 'none')
                                                             }
-                                                        } 
-                                                        disabled={isAlreadyIn ? true : false}
+                                                        }
+                                                            disabled={isAlreadyIn ? true : false}
                                                         >
                                                             {
                                                                 isAlreadyIn ? 'Joined' : 'Join'
@@ -289,10 +264,10 @@ export default function SearchChannel({ onClickFun, setCurrentChannels, currentC
                                                                     if (input.value !== '') {
                                                                         //console.log(input.value)
                                                                         //console.log('submit')
-                                                                        handleJoinChannel(channel, input.value )
+                                                                        handleJoinChannel(channel, input.value)
                                                                         return
                                                                     } else if (password.style.left === '0%') {
-                                                                        
+
                                                                     }
                                                                     if (input?.value === '') {
                                                                         input.focus()
@@ -330,9 +305,7 @@ export default function SearchChannel({ onClickFun, setCurrentChannels, currentC
                                                             }
                                                         } >
 
-                                                        <Input onChange={
-                                                            (e) => { }
-                                                        } id="password" type="password" placeholder="Password" />
+                                                        <Input id="password" type="password" placeholder="Password" />
                                                         <IconButton onClick={
                                                             () => {
                                                                 const password = document.getElementById(`password-${index}`)

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import type { FriendsState } from "../components/Context/user";
 import { UserContext } from "../components/Context/main";
+import api from "../components/Tools/axios";
 
 const useGetFreindsState = () => {
     const [friendsState, setFriendsState] = useState<FriendsState>({
@@ -17,16 +18,7 @@ const useGetFreindsState = () => {
             if (!localStorage.getItem("access_token")) {
                 throw new Error("No access token found");
             }
-            const url = "http://localhost:4000/friends/";
-            const response = await fetch(url, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-                },
-            });
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            const data = await response.json();
+            const { data } = await api.get("/friends/");
             //console.log(data);
             const AcceptedFriends = data.friends.filter((friend: any) => friend.status === "accepted");
             const SentRequests = data.friends.filter((friend: any) => friend.status === "pending" && friend.sender === AuthUser.username);

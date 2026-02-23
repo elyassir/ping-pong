@@ -4,6 +4,7 @@ import { MoreVert } from "@mui/icons-material"
 import type { MembersInterface } from "./ChannelMembers"
 import React, { useEffect } from "react"
 import { toast } from "react-toastify"
+import api from "../../../Tools/axios"
 
 
 
@@ -33,32 +34,11 @@ export default function MoreOptionsMember(
 
     const handleSetAdmin = async () => {
         try {
-            const url = `http://localhost:4000/groups/${chat.id}/promote/${member.username}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            })
-            if (response.ok) {
-                toast.success('success');
-                // const newMembers = members.find()
-                setMembers((prev) => {
-                    return prev.map((mem) => {
-                        if (mem.username === member.username) {
-                            return {
-                                ...mem,
-                                role: 'Admin'
-                            }
-                        }
-                        return mem;
-                    })
-                }
-                )
-
-            } else {
-                throw Error('error');
-            }
+            await api.post(`/groups/${chat.id}/promote/${member.username}`);
+            toast.success('success');
+            setMembers((prev) => prev.map((mem) =>
+                mem.username === member.username ? { ...mem, role: 'Admin' } : mem
+            ));
         }
         catch (e) {
             toast.error('error');
@@ -67,31 +47,11 @@ export default function MoreOptionsMember(
 
     const handleUnsetAdmin = async () => {
         try {
-            const url = `http://localhost:4000/groups/${chat.id}/demote/${member.username}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            })
-            if (response.ok) {
-                toast.success('success');
-                setMembers((prev) => {
-                    return prev.map((mem) => {
-                        if (mem.username === member.username) {
-                            return {
-                                ...mem,
-                                role: 'Member'
-                            }
-                        }
-                        return mem;
-                    })
-                }
-                )
-
-            } else {
-                throw Error('error');
-            }
+            await api.post(`/groups/${chat.id}/demote/${member.username}`);
+            toast.success('success');
+            setMembers((prev) => prev.map((mem) =>
+                mem.username === member.username ? { ...mem, role: 'Member' } : mem
+            ));
         }
         catch (e) {
             toast.error('error');
@@ -100,33 +60,12 @@ export default function MoreOptionsMember(
 
     const handleBlockUser = async () => {
         try {
-            const url = `http://localhost:4000/friends/block/${member.username}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            })
-            if (response.ok) {
-                toast.success('you have successfully blocked that user')
-                // setMembers((prev) => {
-                //     return prev.filter((mem) => mem.username !== member.username);
-                // }
-                // )
-                setFriendsState((prev) => {
-                    return {
-                        AcceptedFriends: prev.AcceptedFriends,
-                        SentRequests: prev.SentRequests,
-                        RecievedRequests: prev.RecievedRequests,
-                        Blocked: [...prev.Blocked, member.username]
-                    }
-                }
-                )
-
-
-            } else {
-                throw Error('error');
-            }
+            await api.post(`/friends/block/${member.username}`);
+            toast.success('you have successfully blocked that user')
+            setFriendsState((prev) => ({
+                ...prev,
+                Blocked: [...prev.Blocked, member.username]
+            }));
         }
         catch (e) {
             toast.error('error');
@@ -135,33 +74,12 @@ export default function MoreOptionsMember(
 
     const handleUnBlockUser = async () => {
         try {
-            const url = `http://localhost:4000/friends/unblock/${member.username}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            })
-            if (response.ok) {
-                toast.success('you have successfully blocked that user')
-                // setMembers((prev) => {
-                //     return prev.filter((mem) => mem.username !== member.username);
-                // }
-                // )
-                setFriendsState((prev) => {
-                    return {
-                        AcceptedFriends: prev.AcceptedFriends,
-                        SentRequests: prev.SentRequests,
-                        RecievedRequests: prev.RecievedRequests,
-                        Blocked: [...prev.Blocked.filter((e)=>e!==member.username)]
-                    }
-                }
-                )
-
-
-            } else {
-                throw Error('error');
-            }
+            await api.post(`/friends/unblock/${member.username}`);
+            toast.success('you have successfully unblocked that user')
+            setFriendsState((prev) => ({
+                ...prev,
+                Blocked: prev.Blocked.filter((e) => e !== member.username)
+            }));
         }
         catch (e) {
             toast.error('error');
@@ -170,23 +88,9 @@ export default function MoreOptionsMember(
 
     const handleMuteMember = async () => {
         try {
-            const url = `http://localhost:4000/groups/${chat.id}/mute/${member.username}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            })
-            if (response.ok) {
-                toast.success('success');
-                setMutedMembers((prev) => {
-                    return [...prev, { username: member.username, image: member.image }];
-                }
-                )
-
-            } else {
-                throw Error('error');
-            }
+            await api.post(`/groups/${chat.id}/mute/${member.username}`);
+            toast.success('success');
+            setMutedMembers((prev) => [...prev, { username: member.username, image: member.image }]);
         }
         catch (e) {
             toast.error('error');
@@ -195,23 +99,9 @@ export default function MoreOptionsMember(
 
     const handleKickMember = async () => {
         try {
-            const url = `http://localhost:4000/groups/delete/${chat.id}/${member.username}`
-            const response = await fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            })
-            if (response.ok) {
-                toast.success('success');
-                setMembers((prev) => {
-                    return prev.filter((mem) => mem.username !== member.username);
-                }
-                )
-
-            } else {
-                throw Error('error');
-            }
+            await api.delete(`/groups/delete/${chat.id}/${member.username}`);
+            toast.success('success');
+            setMembers((prev) => prev.filter((mem) => mem.username !== member.username));
         }
         catch (e) {
             toast.error('error');
@@ -220,23 +110,9 @@ export default function MoreOptionsMember(
 
     const handleUnMuteMember = async () => {
         try {
-            const url = `http://localhost:4000/groups/${chat.id}/unmute/${member.username}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            })
-            if (response.ok) {
-                toast.success('success');
-                setMutedMembers((prev) => {
-                    return prev.filter((mem) => mem.username !== member.username);
-                }
-                )
-
-            } else {
-                throw Error('error');
-            }
+            await api.post(`/groups/${chat.id}/unmute/${member.username}`);
+            toast.success('success');
+            setMutedMembers((prev) => prev.filter((mem) => mem.username !== member.username));
         }
         catch (e) {
             toast.error('error');
@@ -245,25 +121,9 @@ export default function MoreOptionsMember(
 
     const handleBanMember = async () => {
         try {
-            const url = `http://localhost:4000/groups/${chat.id}/ban/${member.username}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            })
-            if (response.ok) {
-                const data = await response.json();
-
-                toast.success(data.success);
-                setMembers((prev) => {
-                    return prev.filter((mem) => mem.username !== member.username);
-                }
-                )
-
-            } else {
-                throw Error('error');
-            }
+            const { data } = await api.post(`/groups/${chat.id}/ban/${member.username}`);
+            toast.success(data.success);
+            setMembers((prev) => prev.filter((mem) => mem.username !== member.username));
         }
         catch (e) {
             toast.error('error');
@@ -362,17 +222,17 @@ export default function MoreOptionsMember(
                 }
                 {
                     friendsState.Blocked.find((blocked) => blocked === member.username) === undefined ?
-                    <MenuItem onClick={handleBlockUser} sx={
-                        {
-                            color: 'red',
-                        }
-                    }>Block Member</MenuItem>
-                    :
-                    <MenuItem onClick={handleUnBlockUser} sx={
-                        {
-                            color: 'red',
-                        }
-                    }>Unblock Member</MenuItem>
+                        <MenuItem onClick={handleBlockUser} sx={
+                            {
+                                color: 'red',
+                            }
+                        }>Block Member</MenuItem>
+                        :
+                        <MenuItem onClick={handleUnBlockUser} sx={
+                            {
+                                color: 'red',
+                            }
+                        }>Unblock Member</MenuItem>
                 }
             </Menu>
         </>

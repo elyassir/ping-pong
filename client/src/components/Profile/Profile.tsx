@@ -5,14 +5,15 @@ import ChangeInfoForm from './ChangeInfoForm';
 import Statistics from "./Statistics"
 import LoadingPage from '../LoadingPage/LoadingPage';
 import ProfileInfo from './ProfileInfo'
-import { Divider, Stack } from '@mui/material/'
+import { Stack } from '@mui/material/'
 import History from './History';
 import Achievement from './Achievement';
 import AccountMenu from '../Home/Profile';
 import Logo from '../Home/Logo';
 import { UserContext } from '../Context/main';
 import useProfileInfo from './Hooks/useProfile';
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import './Profile.css';
 
 export default function Profile(
     {
@@ -28,167 +29,114 @@ export default function Profile(
         socket: any,
         setNotifications: any
     }
-
 ) {
-    const {change} = useParams();
-    console.log(`update_info: ${change}`);
+    const { change } = useParams();
     let [changeInfo, setChangeInfo] = useState(change === "update_info");
     const [loading, setLoading] = React.useState(false);
     const AuthUser = React.useContext(UserContext);
     const { error, loading2, setSrcImage, data, setData, srcImage } = useProfileInfo();
+
     React.useEffect(() => {
-        getFriends()
-      }, [])
+        getFriends();
+    }, []);
+
     if (error) {
         return (
-            <>
-            <div id="app">
-            <Logo />
-            <AccountMenu getFriends={getFriends} socket={socket} notifications={notifications} setNotifications={setNotifications} username={AuthUser.username} image={AuthUser.image} />
-        </div>
-            <Box>
-                <Typography variant="h3" component="h1" gutterBottom>
-                    User not found
-                </Typography>
+            <Box className="profile-page" sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div id="app">
+                    <Logo />
+                    <AccountMenu getFriends={getFriends} socket={socket} notifications={notifications} setNotifications={setNotifications} username={AuthUser.username} image={AuthUser.image} />
+                </div>
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                    <Typography variant="h4" sx={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Inter, sans-serif' }}>
+                        User not found
+                    </Typography>
+                </Box>
             </Box>
-            </>
         );
     }
 
     if (loading2) {
         return (
-            <Box>
-                <Typography variant="h3" component="h1" gutterBottom>
-                    Loading...
-                </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                <Typography variant="h4" sx={{ color: 'rgba(255,255,255,0.4)' }}>Loading...</Typography>
             </Box>
         );
     }
 
-
     return (
-        <>
+        <Box className="profile-page" sx={{ height: '100%' }}>
 
-            {
+            {changeInfo && (
+                <ChangeInfoForm
+                    change={change === "update_info"}
+                    setSrcImage={setSrcImage}
+                    setLoading={setLoading}
+                    data={data}
+                    setChangeInfo={setChangeInfo}
+                    setData={setData}
+                />
+            )}
 
-                changeInfo ?
-                    <ChangeInfoForm change={change === "update_info"} setSrcImage={setSrcImage} setLoading={setLoading} data={data} setChangeInfo={setChangeInfo} setData={setData}/>
-                    :
-                    <></>
-            }
+            {/* ── Top nav ── */}
             <div id="app">
                 <Logo />
-                <AccountMenu getFriends={getFriends} socket={socket} notifications={notifications} setNotifications={setNotifications} username={AuthUser.username} image={AuthUser.image} />
+                <AccountMenu
+                    getFriends={getFriends}
+                    socket={socket}
+                    notifications={notifications}
+                    setNotifications={setNotifications}
+                    username={AuthUser.username}
+                    image={AuthUser.image}
+                />
             </div>
-            <Box sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                margin: "auto",
-                justifyContent: "center"
-            }}>
-                {
-                    loading === true ? <LoadingPage /> : <>
-                        <Box sx={
-                            {
-                                backgroundColor: "rgba(40,40,40,0.75)",
-                                padding: "10px",
-                                width: "1200px",
-                                color: "white",
-                                margin: "20px",
-                                borderRadius: "20px"
-                            }
-                        }
-                        >
-                            <Stack direction={'row'} flexWrap={'wrap'} sx={
-                                {
-                                    '@media (max-width: 1200px)': {
-                                        width: '100%',
-                                        maxWidth: '800px',
-                                        margin: "auto",
-                                        direction: "column",
-                                    }
-                                }
-                            }>
-                                <Box width={'48%'} minWidth={'300px'} sx={
-                                    {
-                                        '@media (max-width: 1200px)': {
-                                            width: '100%',
-                                            margin: "auto",
-                                            marginBottom: "20px"
-                                        },
-                                    }
-                                }
-                                >
-                                    <ProfileInfo friendsState={friendsState} srcImage={srcImage} data={data} setChangeInfo={setChangeInfo} getFriends={getFriends} />
-                                </Box>
-                                <Divider sx={
-                                    {
-                                        borderWidth: "10px",
-                                        borderRadius: "25px",
-                                        margin: "10px",
-                                        '@media (max-width: 1200px)': {
-                                            width: '100%',
-                                            margin: "auto",
-                                        }
-                                    }
-                                } />
-                                <Box width={'48%'} sx={
-                                    {
-                                        '@media (max-width: 1200px)': {
-                                            width: '100%',
-                                            margin: "auto",
-                                        }
-                                    }
-                                }>
-                                    <Statistics data={data} />
-                                </Box>
-                            </Stack>
-                            
-                            <Stack direction={'row'} sx={
-                                {
-                                    '@media (max-width: 1200px)': {
-                                        width: '100%',
-                                        maxWidth: '800px',
-                                        margin: "auto",
-                                        flexDirection: "column",
-                                    }
-                                }
-                            }>
-                                <Box width={'60%'} sx={
-                                    {
-                                        '@media (max-width: 1200px)': {
-                                            width: '100%',
-                                            margin: "auto",
-                                        }
-                                    }
-                                }>
-                                    <History data={data} />
-                                </Box>
-                                <Divider sx={
-                                    {
-                                        borderWidth: "10px",
-                                        borderRadius: "25px",
-                                        margin: "10px"
-                                    }
-                                } />
-                                <Box width={'40%'} sx={
-                                    {
-                                        '@media (max-width: 1200px)': {
-                                            width: '100%',
-                                            margin: "auto",
-                                        }
-                                    }
-                                }>
-                                    <Achievement data={data} />
-                                </Box>
-                            </Stack>
+
+            {loading ? <LoadingPage /> : (
+                <Box sx={{
+                    maxWidth: '1200px',
+                    margin: '0 auto',
+                    padding: '0 20px 40px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '20px',
+                }}>
+
+                    {/* ── Row 1: Profile Info + Stats ── */}
+                    <Stack
+                        direction={{ xs: 'column', lg: 'row' }}
+                        spacing={2.5}
+                        alignItems="stretch"
+                    >
+                        <Box sx={{ flex: '0 0 auto', width: { xs: '100%', lg: '48%' } }}>
+                            <ProfileInfo
+                                friendsState={friendsState}
+                                srcImage={srcImage}
+                                data={data}
+                                setChangeInfo={setChangeInfo}
+                                getFriends={getFriends}
+                            />
                         </Box>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                            <Statistics data={data} />
+                        </Box>
+                    </Stack>
 
-                    </>
-                }
-            </Box>
+                    {/* ── Row 2: History + Achievements ── */}
+                    <Stack
+                        direction={{ xs: 'column', lg: 'row' }}
+                        spacing={2.5}
+                        alignItems="stretch"
+                    >
+                        <Box sx={{ flex: '0 0 auto', width: { xs: '100%', lg: '58%' } }}>
+                            <History data={data} />
+                        </Box>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                            <Achievement data={data} />
+                        </Box>
+                    </Stack>
 
-        </>
-
+                </Box>
+            )}
+        </Box>
     );
 }

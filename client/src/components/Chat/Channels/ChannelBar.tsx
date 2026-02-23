@@ -1,5 +1,4 @@
 import {
-    Avatar,
     Box,
     IconButton,
     Stack,
@@ -13,6 +12,7 @@ import type { ChannelInterface, ChannelMessagesInterface, FriendsState } from ".
 import MessageChannel from "./MessageChannel";
 import HeaderChannelBar from "./ChannelBar/HeaderChannelBar";
 import { toast } from "react-toastify";
+import api from "../../Tools/axios";
 
 interface ChatListProps {
     selecteChannel: string;
@@ -36,25 +36,9 @@ export default function ChannelBar({ setFriendsState, socket, selecteChannel, se
         if (chat === undefined) {
             return;
         }
-        const url = `http://localhost:4000/groups/messages/${chat.id}`;
-
-        const response = await fetch(url,
-            {
-                headers: {
-                    "Authorization": `Bearer ${AuthUser.access_token}`
-                }
-            });
-        if (!response.ok) {
-            //console.log("error:", response);
-            return;
-        }
-
-        const data = await response.json();
+        const { data } = await api.get(`/groups/messages/${chat.id}`);
         setChannelMessages(data);
         AuthUser.channelMessages = data;
-        // //console.log("data:", data);
-        // //console.log("messages:", messages);
-        // setRender(true);
     }
 
     useEffect(() => {
@@ -73,8 +57,8 @@ export default function ChannelBar({ setFriendsState, socket, selecteChannel, se
                 toast.error(arg.error);
                 //console.log(arg.error);
                 return;
-              }
-        
+            }
+
             if (arg.message.sender === AuthUser.username) {
                 return  // Do not display the message if the sender is the current user
             }
@@ -87,9 +71,9 @@ export default function ChannelBar({ setFriendsState, socket, selecteChannel, se
             console.log(arg.message)
             console.log(test)
             if (test !== undefined) {
-              return;
+                return;
             }
-      
+
             // setMessages([...AuthUser.messages, {
             //     content: arg.message.content,
             //     sender_name: arg.message.sender,
@@ -199,7 +183,7 @@ export default function ChannelBar({ setFriendsState, socket, selecteChannel, se
                 height: "100%",
             }}
         >
-            <HeaderChannelBar setGroups={setGroups} chat={chat} setSelectedChannel={setSelectedChannel} friendsState={friendsState} setFriendsState={setFriendsState}/>
+            <HeaderChannelBar setGroups={setGroups} chat={chat} setSelectedChannel={setSelectedChannel} friendsState={friendsState} setFriendsState={setFriendsState} />
 
             <Box height={"100%"} sx={
                 {
@@ -219,7 +203,7 @@ export default function ChannelBar({ setFriendsState, socket, selecteChannel, se
                     >Start the conversation by sending a message</Typography> :
                         ChannelMessages.map(
                             (element, key) => {
-                                const test =  friendsState.Blocked.find((element2) => {
+                                const test = friendsState.Blocked.find((element2) => {
                                     return element2 === element.sender_name
                                 }
                                 );
