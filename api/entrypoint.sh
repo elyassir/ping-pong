@@ -15,5 +15,9 @@ echo "🔄 Running database migrations..."
 # migrate deploy is idempotent and production-safe (never prompts, no shadow DB)
 npx prisma migrate deploy
 
-echo "🚀 Starting NestJS application..."
-exec node dist/main
+echo "🚀 Starting NestJS application in ${NODE_ENV:-production} mode..."
+if [ "$NODE_ENV" = "development" ]; then
+  exec npm run start:dev
+else
+  exec node dist/main
+fi

@@ -39,8 +39,10 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 5432
-      NODE_ENV: production
+      NODE_ENV: development
     volumes:
+      - ./api:/app
+      - /app/node_modules
       - upload-vol:/app/uploads
     # depends_on:
     #   db:
@@ -74,6 +76,9 @@ services:
       - .env
     ports:
       - "0.0.0.0:5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
     # depends_on:
     #   backend:
     #     condition: service_started
