@@ -2,7 +2,7 @@ import { SubscribeMessage, MessageBody, ConnectedSocket, WebSocketGateway, WebSo
 import { Server, Socket } from 'socket.io'
 import { PrismaClient } from "@prisma/client";
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from "src/auth/constants";
+// jwtConstants removed
 import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
 import { stat } from "fs";
 import { BadRequestException } from '@nestjs/common';
@@ -12,12 +12,7 @@ async function getUser(client: Socket, jwtService:JwtService) {
   try{
   const token = client.handshake.headers.authorization.replace('Bearer ', '');
 
-  const payload = await jwtService.verifyAsync(
-    token,
-    {
-      secret: jwtConstants.secret
-    }
-  );
+  const payload = await jwtService.verifyAsync(token);
   return payload.username
   }catch(err){
     throw err
@@ -261,12 +256,7 @@ export class NotificationsGateway {
     try {
       const token = client.handshake.headers.authorization.replace('Bearer ', '');
       if (token === "null"){throw new BadRequestException()}
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: jwtConstants.secret
-        }
-        );
+      const payload = await this.jwtService.verifyAsync(token);
         map.set(payload.username, client)
     } catch (err) {
     }
@@ -277,12 +267,7 @@ export class NotificationsGateway {
     try {
       const token = client.handshake.headers.authorization.replace('Bearer ', '');
       if (token === "null"){throw new BadRequestException()}
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: jwtConstants.secret
-        }
-      );
+      const payload = await this.jwtService.verifyAsync(token);
       updateLastSeen(payload.username, true)
       this.server.emit("Online", { username: payload.username })
     } catch (err) {
@@ -294,12 +279,7 @@ export class NotificationsGateway {
     try {
       const token = client.handshake.headers.authorization.replace('Bearer ', '');
       if (token === "null"){throw new BadRequestException()}
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: jwtConstants.secret
-        }
-      );
+      const payload = await this.jwtService.verifyAsync(token);
       if (client.id === map.get(payload.username).id){map.delete(payload.username)}
       if (payload !== undefined && payload !== null){updateLastSeen(payload.username, false)}
       this.server.emit("Offline", { username: payload.username })
@@ -313,11 +293,7 @@ export class NotificationsGateway {
     try {
       const token = client.handshake.headers.authorization.replace('Bearer ', '');
       if (token === "null"){throw new BadRequestException()}
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: jwtConstants.secret
-        })
+      const payload = await this.jwtService.verifyAsync(token);
       const notifs = await getUserNotifications(payload.username)
       
       client.emit("Notifications", notifs)
@@ -339,12 +315,7 @@ export class NotificationsGateway {
     try {
       const token = client.handshake.headers.authorization.replace('Bearer ', '');
       if (token === "null"){throw new BadRequestException()}
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: jwtConstants.secret
-        }
-      );
+      const payload = await this.jwtService.verifyAsync(token);
       let msg = await save_message(payload.username, message)
       const receiverSocket = map.get(message['receiver'])
       if (receiverSocket){
@@ -360,12 +331,7 @@ export class NotificationsGateway {
     try {
       const token = client.handshake.headers.authorization.replace('Bearer ', '');
       if (token === "null"){throw new BadRequestException()}
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: jwtConstants.secret
-        }
-      );
+      const payload = await this.jwtService.verifyAsync(token);
       client.emit('SeenMessages', { success: "messages seen have been updated" });
     } catch (err) {
       client.emit('SeenMessages', { error: "error update the seen in Usermessages" });
@@ -410,12 +376,7 @@ export class NotificationsGateway {
     try {
       const token = client.handshake.headers.authorization.replace('Bearer ', '');
       if (token === "null"){throw new BadRequestException()}
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: jwtConstants.secret
-        }
-      );
+      const payload = await this.jwtService.verifyAsync(token);
       isAuth = true
       if (message['sender'] !== payload.username) { throw new ExceptionsHandler() }
       const isExist = await checkIsExist(message, payload.username)

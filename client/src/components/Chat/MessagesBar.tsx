@@ -1,6 +1,5 @@
 import { Navigation } from "@mui/icons-material";
 import { Avatar, Divider, Stack, Typography } from "@mui/material";
-import { channel } from "diagnostics_channel";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 

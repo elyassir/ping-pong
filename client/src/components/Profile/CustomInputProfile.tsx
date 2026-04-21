@@ -16,7 +16,7 @@ export default function CustomInputProfile(
     const [helperText, setHelperText] = React.useState(' ');
     const [loading, setLoading] = React.useState(false);
 
-    var timer: NodeJS.Timeout;
+    var timer: ReturnType<typeof setTimeout>;
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value);
     };
